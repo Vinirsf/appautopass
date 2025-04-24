@@ -119,7 +119,7 @@ function carregarPlanos() {
     <button onclick="escolherPlano('Básico')">Plano Básico - Grátis</button>
     <button onclick="escolherPlano('Comum')">Plano Comum - R$59/mês</button>
     <button onclick="escolherPlano('Luxo')">Plano Luxo - R$99/mês</button>
-  `;
+`;
 }
 
 function escolherPlano(plano) {
@@ -128,15 +128,45 @@ function escolherPlano(plano) {
 }
 
 function carregarHomeCliente() {
-    const plano = localStorage.getItem('plano');
+    const plano = localStorage.getItem('plano') || 'Básico';
+    const usuario = localStorage.getItem('usuario') || 'Usuário';
+
     document.getElementById('app').innerHTML = `
-      <h2>Olá, Cliente!</h2>
-      <p>Seu plano: <strong>${plano}</strong></p>
-      <button onclick="abrirTelaAgendamento()">Agendar Lavagem</button>
-      <button onclick="buscarLavaRapido()">Encontrar Lava Rápido Perto</button>
-      <button onclick="fazerLogout()">Sair</button>
+      <div class="topo">
+        <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
+        <div>
+          <h3>Olá, ${usuario}</h3>
+          <p class="plano">Você está no plano <span>${plano}</span></p>
+        </div>
+      </div>
+  
+      <div class="dias">
+        <div class="dia">Seg</div>
+        <div class="dia">Ter</div>
+        <div class="dia ativo">Hoje</div>
+        <div class="dia">Qui</div>
+        <div class="dia">Sex</div>
+        <div class="dia">Sáb</div>
+        <div class="dia">Dom</div>
+      </div>
+  
+      <h4>Mais perto de você</h4>
+      <div class="card">
+        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido" />
+        <p><strong>Lava Rápido Premium</strong></p>
+        <p>170 m de você</p>
+        <button class="btn-checkin">Fazer Check-in</button>
+      </div>
+  
+      <div class="bottom-nav">
+        <div class="nav-item ativo">🏠<br>Início</div>
+        <div class="nav-item">📍<br>Mapa</div>
+        <div class="nav-item">🧽<br>Parceiros</div>
+        <div class="nav-item">👤<br>Conta</div>
+      </div>
     `;
 }
+
 
 
 async function carregarHomeEmpresa() {
@@ -153,9 +183,9 @@ async function carregarHomeEmpresa() {
     }
 
     document.getElementById('app').innerHTML = `
-      <h2>Painel do Lava Rápido</h2>
-      ${lista}
-      <button onclick="fazerLogout()">Sair</button>
+    <h2>Painel do Lava Rápido</h2>
+    ${lista}
+    <button onclick="fazerLogout()">Sair</button>
     `;
 }
 
