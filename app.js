@@ -140,33 +140,31 @@ function carregarHomeCliente() {
         </div>
       </div>
   
-      <div class="dias">
-        <div class="dia">Seg</div>
-        <div class="dia">Ter</div>
-        <div class="dia ativo">Hoje</div>
-        <div class="dia">Qui</div>
-        <div class="dia">Sex</div>
-        <div class="dia">Sáb</div>
-        <div class="dia">Dom</div>
-      </div>
+      <h4>Lava Rápidos disponíveis</h4>
   
-      <h4>Mais perto de você</h4>
       <div class="card">
-        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido" />
+        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido A" />
         <p><strong>Lava Rápido Premium</strong></p>
         <p>170 m de você</p>
-        <button class="btn-checkin">Fazer Check-in</button>
+        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido Premium')">Agendar</button>
       </div>
-
-    <div class="bottom-nav">
+  
+      <div class="card">
+        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido B" />
+        <p><strong>Lava Rápido do Zé</strong></p>
+        <p>250 m de você</p>
+        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido do Zé')">Agendar</button>
+      </div>
+  
+      <div class="bottom-nav">
         <div class="nav-item ativo">🏠<br>Início</div>
         <div class="nav-item" onclick="abrirMapa()">📍<br>Mapa</div>
         <div class="nav-item">🧽<br>Parceiros</div>
         <div class="nav-item" onclick="fazerLogout()">👤<br>Sair</div>
-    </div>
-
+      </div>
     `;
 }
+
 
 
 
@@ -228,19 +226,19 @@ function fazerLogout() {
 }
 
 
-async function confirmarAgendamento() {
+async function confirmarAgendamento(local) {
     const data = document.getElementById('data').value;
     const horario = document.getElementById('horario').value;
     const cliente = localStorage.getItem('usuario');
 
     if (!data || !horario) {
-        alert('Preencha data e horário!');
+        alert('Preencha a data e o horário!');
         return;
     }
 
     const { error } = await supabaseClient
         .from('agendamentos')
-        .insert([{ cliente, data, horario }]);
+        .insert([{ cliente, data, horario, local }]);
 
     if (error) {
         alert('Erro ao agendar: ' + error.message);
@@ -249,6 +247,7 @@ async function confirmarAgendamento() {
         carregarHomeCliente();
     }
 }
+
 
 async function registrarCheckin() {
     const cliente = localStorage.getItem('usuario');
@@ -265,3 +264,15 @@ async function registrarCheckin() {
     }
 }
 
+function abrirAgendamento(nomeLavaRapido) {
+    document.getElementById('app').innerHTML = `
+      <h2>Agendar Lavagem</h2>
+      <p>Local: <strong>${nomeLavaRapido}</strong></p>
+      <label>Data:</label>
+      <input type="date" id="data" />
+      <label>Horário:</label>
+      <input type="time" id="horario" />
+      <button onclick="confirmarAgendamento('${nomeLavaRapido}')">Confirmar</button>
+      <button onclick="carregarHomeCliente()">Voltar</button>
+    `;
+}
