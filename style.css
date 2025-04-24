@@ -251,3 +251,15 @@ input {
     border-radius: 12px;
     border: none;
 }
+
+.auth-box button:last-child {
+    background: transparent;
+    color: #9E9E9E;
+    border: 1px solid #555;
+}
+
+.status {
+    text-transform: capitalize;
+    font-weight: bold;
+    color: #FFD700;
+}
