@@ -132,7 +132,7 @@ function carregarHomeCliente() {
   
         <div class="btn-group">
           <button class="btn-blue" onclick="abrirAgendamento('Lava Rápido Premium')">Solicitar Lavagem</button>
-          <button class="btn-yellow" onclick="verPedidos()">Acompanhar Pedido</button>
+          <button class="btn-yellow" onclick="verHistorico()">Acompanhar Pedido</button>
           <button class="btn-grey">Ver Recompensas</button>
         </div>
       </div>
@@ -288,3 +288,37 @@ function carregarEscolhaInicial() {
       </div>
     `;
 }
+
+async function verHistorico() {
+    const cliente = localStorage.getItem('usuario');
+
+    const { data, error } = await supabaseClient
+        .from('agendamentos')
+        .select('*')
+        .eq('cliente', cliente)
+        .order('data', { ascending: false });
+
+    if (error) {
+        alert('Erro ao buscar histórico: ' + error.message);
+        return;
+    }
+
+    let html = '<h2>Meus Agendamentos</h2>';
+
+    if (!data || data.length === 0) {
+        html += `<p>Você ainda não fez nenhum agendamento.</p>`;
+    } else {
+        html += data.map(item => `
+        <div class="card">
+          <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
+          <p><strong>Local:</strong> ${item.local}</p>
+          <p><strong>Status:</strong> <span class="status">${item.status}</span></p>
+        </div>
+      `).join('');
+    }
+
+    html += `<button onclick="carregarHomeCliente()">Voltar</button>`;
+
+    document.getElementById('app').innerHTML = html;
+}
+
