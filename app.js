@@ -1,79 +1,71 @@
+// Supabase config
 const SUPABASE_URL = 'https://fbdytxfxshbhebowpaur.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZHl0eGZ4c2hiaGVib3dwYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDY2MTgsImV4cCI6MjA2MTAyMjYxOH0.Lw8J1mGOi8PfYsCcLDW1zl3KRlu_Bexs_BmMACzS3ms'; // sua chave completa aqui
-
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...'; // substitua pela sua chave completa
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
-document.addEventListener('DOMContentLoaded', () => {
-    const tipo = localStorage.getItem('tipo');
-    const logado = localStorage.getItem('logado');
-
-    if (!logado) {
-        carregarEscolhaInicial();
-    } else if (tipo === 'cliente') {
-        if (!localStorage.getItem('plano')) {
-            carregarPlanos();
-        } else {
-            carregarHomeCliente();
-        }
-    } else if (tipo === 'empresa') {
-        carregarHomeEmpresa();
-    }
-});
-
-function carregarEscolhaInicial() {
-    document.getElementById('app').innerHTML = `
-    <h2>Bem-vindo!</h2>
-    <button onclick="carregarLoginCliente()">Sou Cliente</button>
-    <button onclick="carregarLoginEmpresa()">Sou Lava Rápido</button>
-  `;
-}
-
+// Tela inicial para clientes
 function carregarLoginCliente() {
     document.getElementById('app').innerHTML = `
-    <h2>Login - Cliente</h2>
-    <input type="text" id="email" placeholder="Nome de usuário" />
-    <input type="password" id="senha" placeholder="Senha" />
-    <button onclick="fazerLogin('cliente')">Entrar</button>
-    <p>Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
+    <div class="auth-box">
+      <h2>Login - Cliente</h2>
+      <input type="text" id="email" placeholder="Nome de usuário" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="fazerLogin('cliente')">Entrar</button>
+      <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
+    </div>
   `;
 }
 
-function carregarLoginEmpresa() {
-    document.getElementById('app').innerHTML = `
-    <h2>Login - Lava Rápido</h2>
-    <input type="text" id="email" placeholder="Nome da empresa" />
-    <input type="password" id="senha" placeholder="Senha" />
-    <button onclick="fazerLogin('empresa')">Entrar</button>
-    <p>Não tem conta? <a href="#" onclick="carregarCadastroEmpresa()">Cadastre-se</a></p>
-  `;
-}
-
+// Tela de cadastro
 function carregarCadastroCliente() {
     document.getElementById('app').innerHTML = `
-    <h2>Cadastro - Cliente</h2>
-    <input type="text" id="email" placeholder="Nome de usuário" />
-    <input type="password" id="senha" placeholder="Senha" />
-    <button onclick="fazerCadastro('cliente')">Cadastrar</button>
+    <div class="auth-box">
+      <h2>Cadastro - Cliente</h2>
+      <input type="text" id="email" placeholder="Nome de usuário" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="fazerCadastro('cliente')">Cadastrar</button>
+      <p class="auth-link">Já tem conta? <a href="#" onclick="carregarLoginCliente()">Entrar</a></p>
+    </div>
   `;
 }
 
+// Tela inicial para empresa
+function carregarLoginEmpresa() {
+    document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Login - Lava Rápido</h2>
+      <input type="text" id="email" placeholder="Nome da empresa" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="fazerLogin('empresa')">Entrar</button>
+      <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroEmpresa()">Cadastre-se</a></p>
+    </div>
+  `;
+}
+
+// Cadastro da empresa
 function carregarCadastroEmpresa() {
     document.getElementById('app').innerHTML = `
-    <h2>Cadastro - Lava Rápido</h2>
-    <input type="text" id="email" placeholder="Nome da empresa" />
-    <input type="password" id="senha" placeholder="Senha" />
-    <button onclick="fazerCadastro('empresa')">Cadastrar</button>
+    <div class="auth-box">
+      <h2>Cadastro - Lava Rápido</h2>
+      <input type="text" id="email" placeholder="Nome da empresa" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="fazerCadastro('empresa')">Cadastrar</button>
+    </div>
   `;
 }
 
+// Cadastro de usuário
 async function fazerCadastro(tipo) {
     const nome = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
 
-    if (!nome || !senha) return alert('Preencha todos os campos!');
+    if (!nome || !senha) {
+        alert('Preencha todos os campos!');
+        return;
+    }
 
-    const { data, error } = await supabaseClient
+    const { error } = await supabaseClient
         .from('usuarios')
         .insert([{ nome_usuario: nome, senha, tipo }]);
 
@@ -83,10 +75,11 @@ async function fazerCadastro(tipo) {
         localStorage.setItem('logado', 'true');
         localStorage.setItem('tipo', tipo);
         localStorage.setItem('usuario', nome);
-        tipo === 'cliente' ? carregarPlanos() : carregarHomeEmpresa();
+        tipo === 'cliente' ? carregarHomeCliente() : carregarHomeEmpresa();
     }
 }
 
+// Login de usuário
 async function fazerLogin(tipo) {
     const nome = document.getElementById('email').value;
     const senha = document.getElementById('senha').value;
@@ -109,24 +102,11 @@ async function fazerLogin(tipo) {
     localStorage.setItem('usuario', nome);
 
     tipo === 'cliente'
-        ? (!localStorage.getItem('plano') ? carregarPlanos() : carregarHomeCliente())
+        ? carregarHomeCliente()
         : carregarHomeEmpresa();
 }
 
-function carregarPlanos() {
-    document.getElementById('app').innerHTML = `
-    <h2>Escolha seu plano</h2>
-    <button onclick="escolherPlano('Básico')">Plano Básico - Grátis</button>
-    <button onclick="escolherPlano('Comum')">Plano Comum - R$59/mês</button>
-    <button onclick="escolherPlano('Luxo')">Plano Luxo - R$99/mês</button>
-`;
-}
-
-function escolherPlano(plano) {
-    localStorage.setItem('plano', plano);
-    carregarHomeCliente();
-}
-
+// Tela inicial do cliente
 function carregarHomeCliente() {
     const plano = localStorage.getItem('plano') || 'Básico';
     const usuario = localStorage.getItem('usuario') || 'Usuário';
@@ -158,10 +138,44 @@ function carregarHomeCliente() {
     `;
 }
 
+// Tela de agendamento
+function abrirAgendamento(nomeLavaRapido) {
+    document.getElementById('app').innerHTML = `
+      <div class="auth-box">
+        <h2>Agendar Lavagem</h2>
+        <p><strong>${nomeLavaRapido}</strong></p>
+        <input type="date" id="data" />
+        <input type="time" id="horario" />
+        <button onclick="confirmarAgendamento('${nomeLavaRapido}')">Confirmar</button>
+        <button onclick="carregarHomeCliente()">Voltar</button>
+      </div>
+    `;
+}
 
+// Confirmação do agendamento
+async function confirmarAgendamento(local) {
+    const data = document.getElementById('data').value;
+    const horario = document.getElementById('horario').value;
+    const cliente = localStorage.getItem('usuario');
 
+    if (!data || !horario) {
+        alert('Preencha data e horário!');
+        return;
+    }
 
+    const { error } = await supabaseClient
+        .from('agendamentos')
+        .insert([{ cliente, data, horario, local, status: 'pendente' }]);
 
+    if (error) {
+        alert('Erro ao agendar: ' + error.message);
+    } else {
+        alert('Lavagem agendada com sucesso!');
+        carregarHomeCliente();
+    }
+}
+
+// Tela da empresa com lista de agendamentos
 async function carregarHomeEmpresa() {
     const { data, error } = await supabaseClient
         .from('agendamentos')
@@ -172,7 +186,7 @@ async function carregarHomeEmpresa() {
 
     if (data && data.length > 0) {
         lista = data.map(item => `
-        <div class="card card-empresa">
+        <div class="card-empresa">
           <p><strong>Cliente:</strong> ${item.cliente}</p>
           <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
           <p><strong>Local:</strong> ${item.local}</p>
@@ -193,8 +207,32 @@ async function carregarHomeEmpresa() {
     `;
 }
 
+// Atualização de status de agendamento
+async function atualizarStatus(id, novoStatus) {
+    const { error } = await supabaseClient
+        .from('agendamentos')
+        .update({ status: novoStatus })
+        .eq('id', id);
 
+    if (error) {
+        alert('Erro ao atualizar status: ' + error.message);
+    } else {
+        alert(`Status atualizado para: ${novoStatus}`);
+        carregarHomeEmpresa();
+    }
+}
 
+// Formatar data/hora para exibição
+function formatarDataHora(data, hora) {
+    return `${data.split('-').reverse().join('/')} às ${hora}`;
+}
+
+// Ver pedidos (em breve)
+function verPedidos() {
+    alert('Em breve: acompanhamento de pedidos!');
+}
+
+// Abrir o Google Maps com lava rápidos por perto
 function abrirMapa() {
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
@@ -211,98 +249,22 @@ function abrirMapa() {
     }
 }
 
-
-
-function abrirTelaAgendamento() {
-    document.getElementById('app').innerHTML = `
-      <h2>Agendar Lavagem</h2>
-      <label>Data:</label>
-      <input type="date" id="data" />
-      <label>Horário:</label>
-      <input type="time" id="horario" />
-      <button onclick="confirmarAgendamento()">Confirmar</button>
-      <button onclick="carregarHomeCliente()">Voltar</button>
-    `;
-}
-
-
+// Logout
 function fazerLogout() {
     localStorage.clear();
-    carregarEscolhaInicial();
+    carregarLoginCliente();
 }
 
+// Redirecionamento automático se estiver logado
+document.addEventListener('DOMContentLoaded', () => {
+    const tipo = localStorage.getItem('tipo');
+    const logado = localStorage.getItem('logado');
 
-async function confirmarAgendamento(local) {
-    const data = document.getElementById('data').value;
-    const horario = document.getElementById('horario').value;
-    const cliente = localStorage.getItem('usuario');
-
-    if (!data || !horario) {
-        alert('Preencha a data e o horário!');
-        return;
-    }
-
-    const { error } = await supabaseClient
-        .from('agendamentos')
-        .insert([{ cliente, data, horario, local }]);
-
-    if (error) {
-        alert('Erro ao agendar: ' + error.message);
-    } else {
-        alert('Lavagem agendada com sucesso!');
+    if (!logado) {
+        carregarLoginCliente();
+    } else if (tipo === 'cliente') {
         carregarHomeCliente();
-    }
-}
-
-
-async function registrarCheckin() {
-    const cliente = localStorage.getItem('usuario');
-    const local = 'Lava Rápido Premium'; // Pode ser dinâmico futuramente
-
-    const { error } = await supabaseClient
-        .from('checkins')
-        .insert([{ cliente, local }]);
-
-    if (error) {
-        alert('Erro ao fazer check-in: ' + error.message);
-    } else {
-        alert('Check-in realizado com sucesso!');
-    }
-}
-
-function abrirAgendamento(nomeLavaRapido) {
-    document.getElementById('app').innerHTML = `
-      <h2>Agendar Lavagem</h2>
-      <p>Local: <strong>${nomeLavaRapido}</strong></p>
-      <label>Data:</label>
-      <input type="date" id="data" />
-      <label>Horário:</label>
-      <input type="time" id="horario" />
-      <button onclick="confirmarAgendamento('${nomeLavaRapido}')">Confirmar</button>
-      <button onclick="carregarHomeCliente()">Voltar</button>
-    `;
-}
-
-async function atualizarStatus(id, novoStatus) {
-    const { error } = await supabaseClient
-        .from('agendamentos')
-        .update({ status: novoStatus })
-        .eq('id', id);
-
-    if (error) {
-        alert('Erro ao atualizar status: ' + error.message);
-    } else {
-        alert('Status atualizado para: ' + novoStatus);
+    } else if (tipo === 'empresa') {
         carregarHomeEmpresa();
     }
-}
-
-function formatarDataHora(data, hora) {
-    return `${data.split('-').reverse().join('/')} às ${hora}`;
-}
-
-function verPedidos() {
-    alert('Em breve: tela de acompanhamento de pedidos!');
-}
-
-
+});
