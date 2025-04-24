@@ -6,7 +6,7 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 // Tela inicial para clientes
 function carregarLoginCliente() {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Login - Cliente</h2>
         <input type="text" id="email" placeholder="Nome de usuário" />
@@ -21,7 +21,7 @@ function carregarLoginCliente() {
 
 // Tela de cadastro
 function carregarCadastroCliente() {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Cadastro - Cliente</h2>
         <input type="text" id="email" placeholder="Nome de usuário" />
@@ -35,7 +35,7 @@ function carregarCadastroCliente() {
 
 // Tela inicial para empresa
 function carregarLoginEmpresa() {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Login - Lava Rápido</h2>
         <input type="text" id="email" placeholder="Nome da empresa" />
@@ -50,7 +50,7 @@ function carregarLoginEmpresa() {
 
 // Cadastro da empresa
 function carregarCadastroEmpresa() {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Cadastro - Lava Rápido</h2>
         <input type="text" id="email" placeholder="Nome da empresa" />
@@ -64,61 +64,61 @@ function carregarCadastroEmpresa() {
 
 // Cadastro de usuário
 async function fazerCadastro(tipo) {
-    const nome = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
+  const nome = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
 
-    if (!nome || !senha) {
-        alert('Preencha todos os campos!');
-        return;
-    }
+  if (!nome || !senha) {
+    alert('Preencha todos os campos!');
+    return;
+  }
 
-    const { error } = await supabaseClient
-        .from('usuarios')
-        .insert([{ nome_usuario: nome, senha, tipo }]);
+  const { error } = await supabaseClient
+    .from('usuarios')
+    .insert([{ nome_usuario: nome, senha, tipo }]);
 
-    if (error) {
-        alert('Erro ao cadastrar: ' + error.message);
-    } else {
-        localStorage.setItem('logado', 'true');
-        localStorage.setItem('tipo', tipo);
-        localStorage.setItem('usuario', nome);
-        tipo === 'cliente' ? carregarHomeCliente() : carregarHomeEmpresa();
-    }
+  if (error) {
+    alert('Erro ao cadastrar: ' + error.message);
+  } else {
+    localStorage.setItem('logado', 'true');
+    localStorage.setItem('tipo', tipo);
+    localStorage.setItem('usuario', nome);
+    tipo === 'cliente' ? carregarHomeCliente() : carregarHomeEmpresa();
+  }
 }
 
 // Login de usuário
 async function fazerLogin(tipo) {
-    const nome = document.getElementById('email').value;
-    const senha = document.getElementById('senha').value;
+  const nome = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
 
-    const { data, error } = await supabaseClient
-        .from('usuarios')
-        .select('*')
-        .eq('nome_usuario', nome)
-        .eq('senha', senha)
-        .eq('tipo', tipo)
-        .single();
+  const { data, error } = await supabaseClient
+    .from('usuarios')
+    .select('*')
+    .eq('nome_usuario', nome)
+    .eq('senha', senha)
+    .eq('tipo', tipo)
+    .single();
 
-    if (error || !data) {
-        alert('Usuário ou senha inválidos.');
-        return;
-    }
+  if (error || !data) {
+    alert('Usuário ou senha inválidos.');
+    return;
+  }
 
-    localStorage.setItem('logado', 'true');
-    localStorage.setItem('tipo', tipo);
-    localStorage.setItem('usuario', nome);
+  localStorage.setItem('logado', 'true');
+  localStorage.setItem('tipo', tipo);
+  localStorage.setItem('usuario', nome);
 
-    tipo === 'cliente'
-        ? carregarHomeCliente()
-        : carregarHomeEmpresa();
+  tipo === 'cliente'
+    ? carregarHomeCliente()
+    : carregarHomeEmpresa();
 }
 
 // Tela inicial do cliente
 function carregarHomeCliente() {
-    const plano = localStorage.getItem('plano') || 'Básico';
-    const usuario = localStorage.getItem('usuario') || 'Usuário';
+  const plano = localStorage.getItem('plano') || 'Básico';
+  const usuario = localStorage.getItem('usuario') || 'Usuário';
 
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="topo">
         <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
         <div>
@@ -154,7 +154,7 @@ function carregarHomeCliente() {
 
 // Tela de agendamento
 function abrirAgendamento(nomeLavaRapido) {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Agendar Lavagem</h2>
         <p><strong>${nomeLavaRapido}</strong></p>
@@ -169,38 +169,38 @@ function abrirAgendamento(nomeLavaRapido) {
 
 // Confirmação do agendamento
 async function confirmarAgendamento(local) {
-    const data = document.getElementById('data').value;
-    const horario = document.getElementById('horario').value;
-    const cliente = localStorage.getItem('usuario');
+  const data = document.getElementById('data').value;
+  const horario = document.getElementById('horario').value;
+  const cliente = localStorage.getItem('usuario');
 
-    if (!data || !horario) {
-        alert('Preencha data e horário!');
-        return;
-    }
+  if (!data || !horario) {
+    alert('Preencha data e horário!');
+    return;
+  }
 
-    const { error } = await supabaseClient
-        .from('agendamentos')
-        .insert([{ cliente, data, horario, local, status: 'pendente' }]);
+  const { error } = await supabaseClient
+    .from('agendamentos')
+    .insert([{ cliente, data, horario, local, status: 'pendente' }]);
 
-    if (error) {
-        alert('Erro ao agendar: ' + error.message);
-    } else {
-        alert('Lavagem agendada com sucesso!');
-        carregarHomeCliente();
-    }
+  if (error) {
+    alert('Erro ao agendar: ' + error.message);
+  } else {
+    alert('Lavagem agendada com sucesso!');
+    carregarHomeCliente();
+  }
 }
 
 // Tela da empresa com lista de agendamentos
 async function carregarHomeEmpresa() {
-    const { data, error } = await supabaseClient
-        .from('agendamentos')
-        .select('*')
-        .order('data', { ascending: true });
+  const { data, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .order('data', { ascending: true });
 
-    let lista = '<p>Nenhum agendamento encontrado.</p>';
+  let lista = '<p>Nenhum agendamento encontrado.</p>';
 
-    if (data && data.length > 0) {
-        lista = data.map(item => `
+  if (data && data.length > 0) {
+    lista = data.map(item => `
         <div class="card-empresa">
           <p><strong>Cliente:</strong> ${item.cliente}</p>
           <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
@@ -213,9 +213,9 @@ async function carregarHomeEmpresa() {
           </div>
         </div>
       `).join('');
-    }
+  }
 
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <h2>Painel da Empresa</h2>
       ${lista}
       <button onclick="fazerLogout()">Sair</button>
@@ -224,70 +224,70 @@ async function carregarHomeEmpresa() {
 
 // Atualização de status de agendamento
 async function atualizarStatus(id, novoStatus) {
-    const { error } = await supabaseClient
-        .from('agendamentos')
-        .update({ status: novoStatus })
-        .eq('id', id);
+  const { error } = await supabaseClient
+    .from('agendamentos')
+    .update({ status: novoStatus })
+    .eq('id', id);
 
-    if (error) {
-        alert('Erro ao atualizar status: ' + error.message);
-    } else {
-        alert(`Status atualizado para: ${novoStatus}`);
-        carregarHomeEmpresa();
-    }
+  if (error) {
+    alert('Erro ao atualizar status: ' + error.message);
+  } else {
+    alert(`Status atualizado para: ${novoStatus}`);
+    carregarHomeEmpresa();
+  }
 }
 
 // Formatar data/hora para exibição
 function formatarDataHora(data, hora) {
-    return `${data.split('-').reverse().join('/')} às ${hora}`;
+  return `${data.split('-').reverse().join('/')} às ${hora}`;
 }
 
 // Ver pedidos (em breve)
 function verPedidos() {
-    alert('Em breve: acompanhamento de pedidos!');
+  alert('Em breve: acompanhamento de pedidos!');
 }
 
 // Abrir o Google Maps com lava rápidos por perto
 function abrirMapa() {
-    if ('geolocation' in navigator) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                const lat = pos.coords.latitude;
-                const lng = pos.coords.longitude;
-                const url = `https://www.google.com/maps/search/lava+rápido/@${lat},${lng},15z`;
-                window.open(url, '_blank');
-            },
-            () => alert('Não foi possível obter a localização.')
-        );
-    } else {
-        alert('Geolocalização não suportada.');
-    }
+  if ('geolocation' in navigator) {
+    navigator.geolocation.getCurrentPosition(
+      (pos) => {
+        const lat = pos.coords.latitude;
+        const lng = pos.coords.longitude;
+        const url = `https://www.google.com/maps/search/lava+rápido/@${lat},${lng},15z`;
+        window.open(url, '_blank');
+      },
+      () => alert('Não foi possível obter a localização.')
+    );
+  } else {
+    alert('Geolocalização não suportada.');
+  }
 }
 
 // Logout
 function fazerLogout() {
-    localStorage.clear();
-    carregarEscolhaInicial(); // ✅ Correto
+  localStorage.clear();
+  carregarEscolhaInicial(); // ✅ Correto
 }
 
 
 // Redirecionamento automático se estiver logado
 document.addEventListener('DOMContentLoaded', () => {
-    const tipo = localStorage.getItem('tipo');
-    const logado = localStorage.getItem('logado');
+  const tipo = localStorage.getItem('tipo');
+  const logado = localStorage.getItem('logado');
 
-    if (!logado) {
-        carregarEscolhaInicial();
-    } else if (tipo === 'cliente') {
-        carregarHomeCliente();
-    } else if (tipo === 'empresa') {
-        carregarHomeEmpresa();
-    }
+  if (!logado) {
+    carregarEscolhaInicial();
+  } else if (tipo === 'cliente') {
+    carregarHomeCliente();
+  } else if (tipo === 'empresa') {
+    carregarHomeEmpresa();
+  }
 });
 
 
 function carregarEscolhaInicial() {
-    document.getElementById('app').innerHTML = `
+  document.getElementById('app').innerHTML = `
       <div class="auth-box">
         <h2>Bem-vindo!</h2>
         <p>Como deseja acessar o app?</p>
@@ -298,35 +298,50 @@ function carregarEscolhaInicial() {
 }
 
 async function verHistorico() {
-    const cliente = localStorage.getItem('usuario');
+  const cliente = localStorage.getItem('usuario');
 
-    const { data, error } = await supabaseClient
-        .from('agendamentos')
-        .select('*')
-        .eq('cliente', cliente)
-        .order('data', { ascending: false });
+  const { data, error } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('cliente', cliente)
+    .order('data', { ascending: false });
 
-    if (error) {
-        alert('Erro ao buscar histórico: ' + error.message);
-        return;
-    }
+  if (error) {
+    alert('Erro ao buscar histórico: ' + error.message);
+    return;
+  }
 
-    let html = '<h2>Meus Agendamentos</h2>';
+  let html = '<h2>Meus Agendamentos</h2>';
 
-    if (!data || data.length === 0) {
-        html += `<p>Você ainda não fez nenhum agendamento.</p>`;
-    } else {
-        html += data.map(item => `
+  if (!data || data.length === 0) {
+    html += `<p>Você ainda não fez nenhum agendamento.</p>`;
+  } else {
+    html += data.map(item => `
         <div class="card">
           <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
           <p><strong>Local:</strong> ${item.local}</p>
           <p><strong>Status:</strong> <span class="status">${item.status}</span></p>
         </div>
       `).join('');
-    }
+  }
 
-    html += `<button onclick="carregarHomeCliente()">Voltar</button>`;
+  html += `<button onclick="carregarHomeCliente()">Voltar</button>`;
 
-    document.getElementById('app').innerHTML = html;
+  document.getElementById('app').innerHTML = html;
 }
 
+function carregarCadastroLavaRapido() {
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Cadastrar Lava Rápido</h2>
+      <input type="text" id="nome" placeholder="Nome do Lava Rápido" />
+      <input type="text" id="endereco" placeholder="Endereço completo" />
+      <input type="text" id="contato" placeholder="Telefone / E-mail" />
+      <input type="text" id="horario" placeholder="Horário de funcionamento" />
+      <input type="text" id="imagem" placeholder="URL da imagem" />
+      <textarea id="servicos" placeholder='Serviços (JSON Ex: [{"nome":"Lavagem Simples","preco":30}])'></textarea>
+      <button onclick="salvarLavaRapido()">Salvar</button>
+      <button onclick="carregarHomeEmpresa()">Voltar</button>
+    </div>
+  `;
+}
