@@ -119,22 +119,28 @@ function carregarHomeCliente() {
     const usuario = localStorage.getItem('usuario') || 'Usuário';
 
     document.getElementById('app').innerHTML = `
-      <div class="home-premium">
-        <div class="top-bar">
-          <img src="https://cdn-icons-png.flaticon.com/512/1048/1048316.png" class="car-icon" alt="Carro" />
-          <h2>Solicitar Lavagem</h2>
+      <div class="topo">
+        <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
+        <div>
+          <h3>Olá, ${usuario}</h3>
+          <p class="plano">Você está no plano <span>${plano}</span></p>
         </div>
+      </div>
   
-        <div class="user-info">
-          <p>Bem-vindo, <strong>${usuario}</strong></p>
-          <span class="plano-info">Plano: <b>${plano}</b></span>
-        </div>
+      <h4>Lava Rápidos disponíveis</h4>
   
-        <div class="btn-group">
-          <button class="btn-blue" onclick="abrirAgendamento('Lava Rápido Premium')">Solicitar Lavagem</button>
-          <button class="btn-yellow" onclick="verHistorico()">Acompanhar Pedido</button>
-          <button class="btn-grey">Ver Recompensas</button>
-        </div>
+      <div class="card">
+        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido A" />
+        <p><strong>Lava Rápido Premium</strong></p>
+        <p>170 m de você</p>
+        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido Premium')">Agendar</button>
+      </div>
+  
+      <div class="card">
+        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido do Zé" />
+        <p><strong>Lava Rápido do Zé</strong></p>
+        <p>250 m de você</p>
+        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido do Zé')">Agendar</button>
       </div>
   
       <div class="bottom-nav nav-modern">
@@ -144,6 +150,7 @@ function carregarHomeCliente() {
       </div>
     `;
 }
+
 
 // Tela de agendamento
 function abrirAgendamento(nomeLavaRapido) {
@@ -158,6 +165,7 @@ function abrirAgendamento(nomeLavaRapido) {
       </div>
     `;
 }
+
 
 // Confirmação do agendamento
 async function confirmarAgendamento(local) {
