@@ -245,3 +245,18 @@ async function confirmarAgendamento() {
         carregarHomeCliente();
     }
 }
+
+async function registrarCheckin() {
+    const cliente = localStorage.getItem('usuario');
+    const local = 'Lava Rápido Premium'; // Pode ser dinâmico futuramente
+
+    const { error } = await supabaseClient
+        .from('checkins')
+        .insert([{ cliente, local }]);
+
+    if (error) {
+        alert('Erro ao fazer check-in: ' + error.message);
+    } else {
+        alert('Check-in realizado com sucesso!');
+    }
+}
