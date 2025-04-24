@@ -1,7 +1,7 @@
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: #121212;
+    background: #263238;
     color: white;
 }
 
@@ -9,43 +9,39 @@ body {
     max-width: 450px;
     margin: 0 auto;
     padding: 20px;
-    padding-bottom: 90px;
+    padding-bottom: 100px;
 }
 
-h2,
-h3,
-h4 {
-    margin-bottom: 10px;
-}
-
-input,
+/* Botões padrão */
 button {
     width: 100%;
     padding: 12px;
     margin: 10px 0;
     border-radius: 6px;
     font-size: 16px;
-    border: none;
-}
-
-input {
-    background: #1e1e1e;
-    color: white;
-    border: 1px solid #333;
-}
-
-button {
-    background: #4caf50;
-    color: white;
     font-weight: bold;
     cursor: pointer;
+    border: none;
+    background-color: #007AFF;
+    color: white;
 }
 
 button:hover {
-    background: #388e3c;
+    background-color: #005FCC;
 }
 
-/* Estilo do layout moderno */
+/* Inputs */
+input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 6px;
+    border: 1px solid #9E9E9E;
+    background: #37474F;
+    color: white;
+}
+
+/* Topo com avatar */
 .topo {
     display: flex;
     align-items: center;
@@ -54,7 +50,7 @@ button:hover {
 }
 
 .avatar {
-    background-color: #4caf50;
+    background-color: #007AFF;
     color: white;
     width: 50px;
     height: 50px;
@@ -66,43 +62,20 @@ button:hover {
     font-weight: bold;
 }
 
+/* Plano */
 .plano {
     font-size: 14px;
-    color: #8bc34a;
+    color: #FFD700;
 }
 
-.plano span {
-    font-weight: bold;
-    color: #66bb6a;
-}
-
-.dias {
-    display: flex;
-    gap: 10px;
-    overflow-x: auto;
-    margin: 10px 0 20px;
-}
-
-.dia {
-    background: #1e1e1e;
-    padding: 8px 12px;
-    border-radius: 8px;
-    font-size: 14px;
-    flex-shrink: 0;
-    border: 1px solid #333;
-}
-
-.dia.ativo {
-    background: #4caf50;
-    color: white;
-}
-
+/* Card genérico */
 .card {
-    background: #222;
+    background: #37474F;
     border-radius: 10px;
     padding: 15px;
     margin: 20px 0;
     text-align: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
 }
 
 .card img {
@@ -111,53 +84,54 @@ button:hover {
     margin-bottom: 10px;
 }
 
+/* Botão de check-in/agendamento */
 .btn-checkin {
-    background: #4caf50;
+    background: #007AFF;
     color: white;
-    border: none;
-    padding: 10px;
-    width: 100%;
-    font-size: 16px;
-    border-radius: 30px;
-    cursor: pointer;
     font-weight: bold;
+    padding: 10px;
+    border-radius: 30px;
+    width: 100%;
 }
 
+/* Barra inferior */
 .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: #111;
+    background: #1c1c1c;
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
     font-size: 14px;
-    color: white;
+    color: #9E9E9E;
     z-index: 100;
 }
 
 .nav-item {
     text-align: center;
-    opacity: 0.7;
+    opacity: 0.6;
 }
 
 .nav-item.ativo {
-    color: #4caf50;
+    color: #FFD700;
     opacity: 1;
 }
 
+/* Painel da empresa */
 .card-empresa {
-    background: #1e1e1e;
-    border-left: 5px solid #4caf50;
+    background: #37474F;
+    border-left: 5px solid #007AFF;
     padding: 15px;
     margin: 15px 0;
+    border-radius: 8px;
 }
 
 .status {
     font-weight: bold;
     text-transform: capitalize;
-    color: #ffc107;
+    color: #FFD700;
 }
 
 .status-buttons {
@@ -177,13 +151,16 @@ button:hover {
 }
 
 .status-buttons button:nth-child(1) {
-    background: #2196f3;
+    background: #007AFF;
+    /* Confirmar */
 }
 
 .status-buttons button:nth-child(2) {
-    background: #4caf50;
+    background: #4CAF50;
+    /* Finalizar */
 }
 
 .status-buttons button:nth-child(3) {
     background: #f44336;
+    /* Cancelar */
 }
