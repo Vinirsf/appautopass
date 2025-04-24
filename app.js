@@ -157,13 +157,14 @@ function carregarHomeCliente() {
         <p>170 m de você</p>
         <button class="btn-checkin">Fazer Check-in</button>
       </div>
-  
-      <div class="bottom-nav">
+
+    <div class="bottom-nav">
         <div class="nav-item ativo">🏠<br>Início</div>
-        <div class="nav-item">📍<br>Mapa</div>
+        <div class="nav-item" onclick="abrirMapa()">📍<br>Mapa</div>
         <div class="nav-item">🧽<br>Parceiros</div>
-        <div class="nav-item">👤<br>Conta</div>
-      </div>
+        <div class="nav-item" onclick="fazerLogout()">👤<br>Sair</div>
+    </div>
+
     `;
 }
 
@@ -190,7 +191,7 @@ async function carregarHomeEmpresa() {
 }
 
 
-function buscarLavaRapido() {
+function abrirMapa() {
     if ('geolocation' in navigator) {
         navigator.geolocation.getCurrentPosition(
             (pos) => {
@@ -205,6 +206,8 @@ function buscarLavaRapido() {
         alert('Geolocalização não suportada.');
     }
 }
+
+
 
 function abrirTelaAgendamento() {
     document.getElementById('app').innerHTML = `
@@ -223,6 +226,7 @@ function fazerLogout() {
     localStorage.clear();
     carregarEscolhaInicial();
 }
+
 
 async function confirmarAgendamento() {
     const data = document.getElementById('data').value;
@@ -260,3 +264,4 @@ async function registrarCheckin() {
         alert('Check-in realizado com sucesso!');
     }
 }
+
