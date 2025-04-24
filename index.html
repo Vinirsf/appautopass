@@ -5,26 +5,33 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lava Rápido App</title>
+
+    <!-- Manifest PWA -->
     <link rel="manifest" href="manifest.json" />
+
+    <!-- Ícone PWA (opcional) -->
+    <link rel="icon" href="icons/icon-192.png" type="image/png" />
+
+    <!-- Estilo -->
     <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
+    <!-- App será injetado aqui via JS -->
     <div id="app"></div>
 
     <!-- Supabase SDK -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js"></script>
 
-    <!-- App logic -->
+    <!-- Lógica da aplicação -->
     <script src="app.js"></script>
 
-    <button class="btn-checkin" onclick="registrarCheckin()">Fazer Check-in</button>
-
+    <!-- Registro do service worker -->
     <script>
         if ('serviceWorker' in navigator) {
             navigator.serviceWorker.register('service-worker.js')
-                .then(() => console.log('Service Worker registrado.'))
-                .catch(err => console.error('Erro no SW:', err));
+                .then(() => console.log('✅ Service Worker registrado'))
+                .catch(err => console.error('❌ Erro ao registrar SW:', err));
         }
     </script>
 </body>
