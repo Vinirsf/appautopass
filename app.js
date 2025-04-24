@@ -337,60 +337,60 @@ function carregarCadastroLavaRapido() {
 }
 
 async function inicializarMapa() {
-  const { data, error } = await supabaseClient
-    .from('lava_rapidos')
-    .select('*');
+  // Obtém localização do usuário
+  navigator.geolocation.getCurrentPosition(async (pos) => {
+    const userLat = pos.coords.latitude;
+    const userLng = pos.coords.longitude;
 
-  const mapa = new google.maps.Map(document.getElementById('map'), {
-    center: { lat: -23.55052, lng: -46.63331 }, // Ponto inicial (São Paulo por exemplo)
-    zoom: 13,
-  });
+    const mapa = new google.maps.Map(document.getElementById('map'), {
+      center: { lat: userLat, lng: userLng },
+      zoom: 14
+    });
 
-  if (!data || error) return;
-
-  data.forEach(lr => {
-    const marcador = new google.maps.Marker({
-      position: { lat: parseFloat(lr.latitude), lng: parseFloat(lr.longitude) },
+    // Marca o usuário no mapa
+    new google.maps.Marker({
+      position: { lat: userLat, lng: userLng },
       map: mapa,
-      title: lr.nome
+      title: 'Você está aqui',
+      icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
     });
 
-    const info = new google.maps.InfoWindow({
-      content: `
-        <strong>${lr.nome}</strong><br/>
-        ${lr.endereco}<br/>
-        <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
-      `
+    // Busca os lava rápidos do Supabase
+    const { data, error } = await supabaseClient
+      .from('lava_rapidos')
+      .select('*');
+
+    if (!data || error) {
+      console.error('Erro ao buscar lava rápidos:', error);
+      return;
+    }
+
+    data.forEach(lr => {
+      if (lr.latitude && lr.longitude) {
+        const marcador = new google.maps.Marker({
+          position: {
+            lat: parseFloat(lr.latitude),
+            lng: parseFloat(lr.longitude)
+          },
+          map: mapa,
+          title: lr.nome
+        });
+
+        const info = new google.maps.InfoWindow({
+          content: `
+            <strong>${lr.nome}</strong><br/>
+            ${lr.endereco}<br/>
+            <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
+          `
+        });
+
+        marcador.addListener('click', () => {
+          info.open(mapa, marcador);
+        });
+      }
     });
 
-    marcador.addListener('click', () => {
-      info.open(mapa, marcador);
-    });
+  }, () => {
+    alert('Não foi possível obter sua localização.');
   });
-}
-
-async function abrirPerfilLavaRapido(id) {
-  const { data, error } = await supabaseClient
-    .from('lava_rapidos')
-    .select('*')
-    .eq('id', id)
-    .single();
-
-  if (error || !data) {
-    alert('Erro ao carregar perfil');
-    return;
-  }
-
-  document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>${data.nome}</h2>
-      <p><strong>Endereço:</strong> ${data.endereco}</p>
-      <p><strong>Funcionamento:</strong> ${data.horario_funcionamento}</p>
-      <p><strong>Contato:</strong> ${data.contato}</p>
-      <p><strong>Serviços:</strong></p>
-      <pre style="background:#1e1e1e; color:#FFD700">${JSON.stringify(data.servicos, null, 2)}</pre>
-      <button onclick="abrirAgendamento('${data.nome}')">Agendar Serviço</button>
-      <button onclick="carregarHomeCliente()">Voltar</button>
-    </div>
-  `;
 }
