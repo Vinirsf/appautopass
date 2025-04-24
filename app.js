@@ -174,19 +174,31 @@ async function carregarHomeEmpresa() {
         .select('*')
         .order('data', { ascending: true });
 
-    let lista = '<p>Sem agendamentos ainda.</p>';
+    let lista = '<p>Nenhum agendamento encontrado.</p>';
+
     if (data && data.length > 0) {
-        lista = '<ul>' + data.map(item =>
-            `<li><strong>${item.cliente}</strong> - ${item.data} às ${item.horario} (${item.status})</li>`
-        ).join('') + '</ul>';
+        lista = data.map(item => `
+        <div class="card card-empresa">
+          <p><strong>Cliente:</strong> ${item.cliente}</p>
+          <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
+          <p><strong>Local:</strong> ${item.local}</p>
+          <p><strong>Status:</strong> <span class="status">${item.status}</span></p>
+          <div class="status-buttons">
+            <button onclick="atualizarStatus('${item.id}', 'confirmado')">Confirmar</button>
+            <button onclick="atualizarStatus('${item.id}', 'concluído')">Finalizar</button>
+            <button onclick="atualizarStatus('${item.id}', 'cancelado')">Cancelar</button>
+          </div>
+        </div>
+      `).join('');
     }
 
     document.getElementById('app').innerHTML = `
-    <h2>Painel do Lava Rápido</h2>
-    ${lista}
-    <button onclick="fazerLogout()">Sair</button>
+      <h2>Painel da Empresa</h2>
+      ${lista}
+      <button onclick="fazerLogout()">Sair</button>
     `;
 }
+
 
 
 function abrirMapa() {
@@ -276,3 +288,23 @@ function abrirAgendamento(nomeLavaRapido) {
       <button onclick="carregarHomeCliente()">Voltar</button>
     `;
 }
+
+async function atualizarStatus(id, novoStatus) {
+    const { error } = await supabaseClient
+        .from('agendamentos')
+        .update({ status: novoStatus })
+        .eq('id', id);
+
+    if (error) {
+        alert('Erro ao atualizar status: ' + error.message);
+    } else {
+        alert('Status atualizado para: ' + novoStatus);
+        carregarHomeEmpresa();
+    }
+}
+
+function formatarDataHora(data, hora) {
+    return `${data.split('-').reverse().join('/')} às ${hora}`;
+  }
+
+  

@@ -146,3 +146,44 @@ button:hover {
     color: #4caf50;
     opacity: 1;
 }
+
+.card-empresa {
+    background: #1e1e1e;
+    border-left: 5px solid #4caf50;
+    padding: 15px;
+    margin: 15px 0;
+}
+
+.status {
+    font-weight: bold;
+    text-transform: capitalize;
+    color: #ffc107;
+}
+
+.status-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.status-buttons button {
+    flex: 1;
+    font-size: 14px;
+    padding: 8px;
+    border-radius: 6px;
+    border: none;
+    color: white;
+    cursor: pointer;
+}
+
+.status-buttons button:nth-child(1) {
+    background: #2196f3;
+}
+
+.status-buttons button:nth-child(2) {
+    background: #4caf50;
+}
+
+.status-buttons button:nth-child(3) {
+    background: #f44336;
+}
