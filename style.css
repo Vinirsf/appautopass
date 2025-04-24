@@ -1,166 +1,83 @@
-body {
-    margin: 0;
-    font-family: 'Segoe UI', sans-serif;
-    background: #263238;
-    color: white;
-}
-
-#app {
-    max-width: 450px;
-    margin: 0 auto;
+.home-premium {
+    text-align: center;
     padding: 20px;
-    padding-bottom: 100px;
 }
 
-/* Botões padrão */
-button {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 6px;
-    font-size: 16px;
-    font-weight: bold;
-    cursor: pointer;
-    border: none;
-    background-color: #007AFF;
-    color: white;
-}
-
-button:hover {
-    background-color: #005FCC;
-}
-
-/* Inputs */
-input {
-    width: 100%;
-    padding: 12px;
-    margin: 10px 0;
-    border-radius: 6px;
-    border: 1px solid #9E9E9E;
-    background: #37474F;
-    color: white;
-}
-
-/* Topo com avatar */
-.topo {
+.top-bar {
     display: flex;
     align-items: center;
-    gap: 15px;
+    justify-content: center;
+    gap: 10px;
     margin-bottom: 20px;
 }
 
-.avatar {
-    background-color: #007AFF;
-    color: white;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 22px;
-    font-weight: bold;
+.car-icon {
+    width: 48px;
+    height: 48px;
 }
 
-/* Plano */
-.plano {
-    font-size: 14px;
+.user-info {
+    margin-bottom: 20px;
+    color: #ccc;
+}
+
+.plano-info {
+    display: block;
     color: #FFD700;
+    margin-top: 5px;
 }
 
-/* Card genérico */
-.card {
-    background: #37474F;
-    border-radius: 10px;
-    padding: 15px;
-    margin: 20px 0;
-    text-align: center;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+.btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
 }
 
-.card img {
-    width: 100%;
-    border-radius: 8px;
-    margin-bottom: 10px;
-}
-
-/* Botão de check-in/agendamento */
-.btn-checkin {
+.btn-blue {
     background: #007AFF;
     color: white;
-    font-weight: bold;
-    padding: 10px;
-    border-radius: 30px;
-    width: 100%;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
 }
 
-/* Barra inferior */
-.bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+.btn-yellow {
+    background: #FFD700;
+    color: #263238;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
+}
+
+.btn-grey {
+    background: #9E9E9E;
+    color: white;
+    padding: 14px;
+    font-size: 16px;
+    border-radius: 12px;
+    border: none;
+}
+
+.nav-modern {
     background: #1c1c1c;
     display: flex;
     justify-content: space-around;
     padding: 10px 0;
-    font-size: 14px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
     color: #9E9E9E;
-    z-index: 100;
+    font-size: 22px;
+    z-index: 10;
 }
 
-.nav-item {
-    text-align: center;
-    opacity: 0.6;
-}
-
-.nav-item.ativo {
-    color: #FFD700;
-    opacity: 1;
-}
-
-/* Painel da empresa */
-.card-empresa {
-    background: #37474F;
-    border-left: 5px solid #007AFF;
-    padding: 15px;
-    margin: 15px 0;
-    border-radius: 8px;
-}
-
-.status {
-    font-weight: bold;
-    text-transform: capitalize;
-    color: #FFD700;
-}
-
-.status-buttons {
-    display: flex;
-    gap: 10px;
-    margin-top: 10px;
-}
-
-.status-buttons button {
-    flex: 1;
-    font-size: 14px;
-    padding: 8px;
-    border-radius: 6px;
-    border: none;
-    color: white;
+.nav-modern .nav-item {
     cursor: pointer;
 }
 
-.status-buttons button:nth-child(1) {
-    background: #007AFF;
-    /* Confirmar */
-}
-
-.status-buttons button:nth-child(2) {
-    background: #4CAF50;
-    /* Finalizar */
-}
-
-.status-buttons button:nth-child(3) {
-    background: #f44336;
-    /* Cancelar */
+.nav-modern .ativo {
+    color: #FFD700;
 }

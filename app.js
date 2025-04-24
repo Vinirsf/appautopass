@@ -132,38 +132,32 @@ function carregarHomeCliente() {
     const usuario = localStorage.getItem('usuario') || 'Usuário';
 
     document.getElementById('app').innerHTML = `
-      <div class="topo">
-        <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
-        <div>
-          <h3>Olá, ${usuario}</h3>
-          <p class="plano">Você está no plano <span>${plano}</span></p>
+      <div class="home-premium">
+        <div class="top-bar">
+          <img src="https://cdn-icons-png.flaticon.com/512/1048/1048316.png" class="car-icon" alt="Carro" />
+          <h2>Solicitar Lavagem</h2>
+        </div>
+  
+        <div class="user-info">
+          <p>Bem-vindo, <strong>${usuario}</strong></p>
+          <span class="plano-info">Plano: <b>${plano}</b></span>
+        </div>
+  
+        <div class="btn-group">
+          <button class="btn-blue" onclick="abrirAgendamento('Lava Rápido Premium')">Solicitar Lavagem</button>
+          <button class="btn-yellow" onclick="verPedidos()">Acompanhar Pedido</button>
+          <button class="btn-grey">Ver Recompensas</button>
         </div>
       </div>
   
-      <h4>Lava Rápidos disponíveis</h4>
-  
-      <div class="card">
-        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido A" />
-        <p><strong>Lava Rápido Premium</strong></p>
-        <p>170 m de você</p>
-        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido Premium')">Agendar</button>
-      </div>
-  
-      <div class="card">
-        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido B" />
-        <p><strong>Lava Rápido do Zé</strong></p>
-        <p>250 m de você</p>
-        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido do Zé')">Agendar</button>
-      </div>
-  
-      <div class="bottom-nav">
-        <div class="nav-item ativo">🏠<br>Início</div>
-        <div class="nav-item" onclick="abrirMapa()">📍<br>Mapa</div>
-        <div class="nav-item">🧽<br>Parceiros</div>
-        <div class="nav-item" onclick="fazerLogout()">👤<br>Sair</div>
+      <div class="bottom-nav nav-modern">
+        <div class="nav-item ativo">🏠</div>
+        <div class="nav-item" onclick="abrirMapa()">📍</div>
+        <div class="nav-item" onclick="fazerLogout()">🚪</div>
       </div>
     `;
 }
+
 
 
 
@@ -305,6 +299,10 @@ async function atualizarStatus(id, novoStatus) {
 
 function formatarDataHora(data, hora) {
     return `${data.split('-').reverse().join('/')} às ${hora}`;
-  }
+}
 
-  
+function verPedidos() {
+    alert('Em breve: tela de acompanhamento de pedidos!');
+}
+
+
