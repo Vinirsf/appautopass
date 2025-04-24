@@ -1,6 +1,6 @@
 // Supabase config
 const SUPABASE_URL = 'https://fbdytxfxshbhebowpaur.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZHl0eGZ4c2hiaGVib3dwYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDY2MTgsImV4cCI6MjA2MTAyMjYxOH0.Lw8J1mGOi8PfYsCcLDW1zl3KRlu_Bexs_BmMACzS3ms'; 
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZHl0eGZ4c2hiaGVib3dwYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDY2MTgsImV4cCI6MjA2MTAyMjYxOH0.Lw8J1mGOi8PfYsCcLDW1zl3KRlu_Bexs_BmMACzS3ms';
 const { createClient } = supabase;
 const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
@@ -261,10 +261,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const logado = localStorage.getItem('logado');
 
     if (!logado) {
-        carregarLoginCliente();
+        carregarEscolhaInicial();
     } else if (tipo === 'cliente') {
         carregarHomeCliente();
     } else if (tipo === 'empresa') {
         carregarHomeEmpresa();
     }
 });
+
+
+function carregarEscolhaInicial() {
+    document.getElementById('app').innerHTML = `
+      <div class="auth-box">
+        <h2>Bem-vindo!</h2>
+        <p>Como deseja acessar o app?</p>
+        <button onclick="carregarLoginCliente()">Sou Cliente</button>
+        <button onclick="carregarLoginEmpresa()">Sou Lava Rápido</button>
+      </div>
+    `;
+}
