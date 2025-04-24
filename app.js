@@ -114,42 +114,32 @@ async function fazerLogin(tipo) {
 }
 
 // Tela inicial do cliente
-function carregarHomeCliente() {
+async function carregarHomeCliente() {
   const plano = localStorage.getItem('plano') || 'Básico';
   const usuario = localStorage.getItem('usuario') || 'Usuário';
 
   document.getElementById('app').innerHTML = `
-      <div class="topo">
-        <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
-        <div>
-          <h3>Olá, ${usuario}</h3>
-          <p class="plano">Você está no plano <span>${plano}</span></p>
-        </div>
+    <div class="topo">
+      <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
+      <div>
+        <h3>Olá, ${usuario}</h3>
+        <p class="plano">Você está no plano <span>${plano}</span></p>
       </div>
-  
-      <h4>Lava Rápidos disponíveis</h4>
-  
-      <div class="card">
-        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido A" />
-        <p><strong>Lava Rápido Premium</strong></p>
-        <p>170 m de você</p>
-        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido Premium')">Agendar</button>
-      </div>
-  
-      <div class="card">
-        <img src="https://via.placeholder.com/400x150" alt="Lava Rápido do Zé" />
-        <p><strong>Lava Rápido do Zé</strong></p>
-        <p>250 m de você</p>
-        <button class="btn-checkin" onclick="abrirAgendamento('Lava Rápido do Zé')">Agendar</button>
-      </div>
-  
-      <div class="bottom-nav nav-modern">
-        <div class="nav-item ativo">🏠</div>
-        <div class="nav-item" onclick="abrirMapa()">📍</div>
-        <div class="nav-item" onclick="fazerLogout()">🚪</div>
-      </div>
-    `;
+    </div>
+
+    <h4>Lava Rápidos próximos</h4>
+    <div id="map" style="width: 100%; height: 400px; border-radius: 8px; margin-bottom: 20px;"></div>
+
+    <div class="bottom-nav nav-modern">
+      <div class="nav-item ativo">🏠</div>
+      <div class="nav-item" onclick="abrirMapa()">📍</div>
+      <div class="nav-item" onclick="fazerLogout()">🚪</div>
+    </div>
+  `;
+
+  setTimeout(inicializarMapa, 500); // Aguarda carregamento do container
 }
+
 
 
 // Tela de agendamento
@@ -342,6 +332,65 @@ function carregarCadastroLavaRapido() {
       <textarea id="servicos" placeholder='Serviços (JSON Ex: [{"nome":"Lavagem Simples","preco":30}])'></textarea>
       <button onclick="salvarLavaRapido()">Salvar</button>
       <button onclick="carregarHomeEmpresa()">Voltar</button>
+    </div>
+  `;
+}
+
+async function inicializarMapa() {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*');
+
+  const mapa = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: -23.55052, lng: -46.63331 }, // Ponto inicial (São Paulo por exemplo)
+    zoom: 13,
+  });
+
+  if (!data || error) return;
+
+  data.forEach(lr => {
+    const marcador = new google.maps.Marker({
+      position: { lat: parseFloat(lr.latitude), lng: parseFloat(lr.longitude) },
+      map: mapa,
+      title: lr.nome
+    });
+
+    const info = new google.maps.InfoWindow({
+      content: `
+        <strong>${lr.nome}</strong><br/>
+        ${lr.endereco}<br/>
+        <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
+      `
+    });
+
+    marcador.addListener('click', () => {
+      info.open(mapa, marcador);
+    });
+  });
+}
+
+async function abrirPerfilLavaRapido(id) {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) {
+    alert('Erro ao carregar perfil');
+    return;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>${data.nome}</h2>
+      <p><strong>Endereço:</strong> ${data.endereco}</p>
+      <p><strong>Funcionamento:</strong> ${data.horario_funcionamento}</p>
+      <p><strong>Contato:</strong> ${data.contato}</p>
+      <p><strong>Serviços:</strong></p>
+      <pre style="background:#1e1e1e; color:#FFD700">${JSON.stringify(data.servicos, null, 2)}</pre>
+      <button onclick="abrirAgendamento('${data.nome}')">Agendar Serviço</button>
+      <button onclick="carregarHomeCliente()">Voltar</button>
     </div>
   `;
 }
