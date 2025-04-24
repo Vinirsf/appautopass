@@ -7,53 +7,60 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Tela inicial para clientes
 function carregarLoginCliente() {
     document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>Login - Cliente</h2>
-      <input type="text" id="email" placeholder="Nome de usuário" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button onclick="fazerLogin('cliente')">Entrar</button>
-      <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
-    </div>
-  `;
+      <div class="auth-box">
+        <h2>Login - Cliente</h2>
+        <input type="text" id="email" placeholder="Nome de usuário" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerLogin('cliente')">Entrar</button>
+        <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
+        <button onclick="carregarEscolhaInicial()">Voltar</button>
+      </div>
+    `;
 }
+
 
 // Tela de cadastro
 function carregarCadastroCliente() {
     document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>Cadastro - Cliente</h2>
-      <input type="text" id="email" placeholder="Nome de usuário" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button onclick="fazerCadastro('cliente')">Cadastrar</button>
-      <p class="auth-link">Já tem conta? <a href="#" onclick="carregarLoginCliente()">Entrar</a></p>
-    </div>
-  `;
+      <div class="auth-box">
+        <h2>Cadastro - Cliente</h2>
+        <input type="text" id="email" placeholder="Nome de usuário" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerCadastro('cliente')">Cadastrar</button>
+        <button onclick="carregarLoginCliente()">Voltar</button>
+      </div>
+    `;
 }
+
 
 // Tela inicial para empresa
 function carregarLoginEmpresa() {
     document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>Login - Lava Rápido</h2>
-      <input type="text" id="email" placeholder="Nome da empresa" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button onclick="fazerLogin('empresa')">Entrar</button>
-      <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroEmpresa()">Cadastre-se</a></p>
-    </div>
-  `;
+      <div class="auth-box">
+        <h2>Login - Lava Rápido</h2>
+        <input type="text" id="email" placeholder="Nome da empresa" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerLogin('empresa')">Entrar</button>
+        <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroEmpresa()">Cadastre-se</a></p>
+        <button onclick="carregarEscolhaInicial()">Voltar</button>
+      </div>
+    `;
 }
+
 
 // Cadastro da empresa
 function carregarCadastroEmpresa() {
     document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>Cadastro - Lava Rápido</h2>
-      <input type="text" id="email" placeholder="Nome da empresa" />
-      <input type="password" id="senha" placeholder="Senha" />
-      <button onclick="fazerCadastro('empresa')">Cadastrar</button>
-    </div>
-  `;
+      <div class="auth-box">
+        <h2>Cadastro - Lava Rápido</h2>
+        <input type="text" id="email" placeholder="Nome da empresa" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerCadastro('empresa')">Cadastrar</button>
+        <button onclick="carregarLoginEmpresa()">Voltar</button>
+      </div>
+    `;
 }
+
 
 // Cadastro de usuário
 async function fazerCadastro(tipo) {
@@ -252,8 +259,9 @@ function abrirMapa() {
 // Logout
 function fazerLogout() {
     localStorage.clear();
-    carregarLoginCliente();
+    carregarEscolhaInicial(); // ✅ Correto
 }
+
 
 // Redirecionamento automático se estiver logado
 document.addEventListener('DOMContentLoaded', () => {
