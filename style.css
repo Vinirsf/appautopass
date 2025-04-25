@@ -333,3 +333,24 @@ input {
     border-radius: 4px;
     cursor: pointer;
 }
+
+.btn-google {
+    background: #fff;
+    color: #444;
+    border: 1px solid #ccc;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    font-family: Arial, sans-serif;
+}
+
+.btn-google img {
+    height: 20px;
+}

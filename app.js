@@ -7,21 +7,24 @@ const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 // Tela inicial para clientes
 function carregarLoginCliente() {
   document.getElementById('app').innerHTML = `
-      <div class="auth-box">
-        <h2>Login - Cliente</h2>
-        <input type="text" id="email" placeholder="Nome de usuário" />
-        <input type="password" id="senha" placeholder="Senha" />
-        <button onclick="fazerLogin('cliente')">Entrar</button>
-        <button onclick="loginComGoogle()" class="btn-google">
-  <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" style="vertical-align: middle; margin-right: 8px;" />
-  Entrar com Google
-</button>
+    <div class="auth-box">
+      <h2>Login - Cliente</h2>
+      <input type="text" id="email" placeholder="Nome de usuário" />
+      <input type="password" id="senha" placeholder="Senha" />
+      <button onclick="fazerLogin('cliente')">Entrar</button>
+      <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
 
-        <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
-        <button onclick="carregarEscolhaInicial()">Voltar</button>
-      </div>
-    `;
+      <hr style="margin: 20px 0; border-color: #444;" />
+      <button onclick="loginComGoogle()" class="btn-google">
+        <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" style="vertical-align: middle; margin-right: 8px;" />
+        Entrar com Google
+      </button>
+
+      <button onclick="carregarEscolhaInicial()">Voltar</button>
+    </div>
+  `;
 }
+
 
 
 // Tela de cadastro
