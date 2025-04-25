@@ -182,36 +182,27 @@ async function confirmarAgendamento(local) {
 
 // Tela da empresa com lista de agendamentos
 async function carregarHomeEmpresa() {
-  const { data, error } = await supabaseClient
-    .from('agendamentos')
+  const usuario_id = localStorage.getItem('usuario_id');
+  const { data } = await supabaseClient
+    .from('lava_rapidos')
     .select('*')
-    .order('data', { ascending: true });
+    .eq('usuario_id', usuario_id)
+    .limit(1);
 
-  let lista = '<p>Nenhum agendamento encontrado.</p>';
+  let botaoCadastro = '';
 
-  if (data && data.length > 0) {
-    lista = data.map(item => `
-        <div class="card-empresa">
-          <p><strong>Cliente:</strong> ${item.cliente}</p>
-          <p><strong>Data:</strong> ${formatarDataHora(item.data, item.horario)}</p>
-          <p><strong>Local:</strong> ${item.local}</p>
-          <p><strong>Status:</strong> <span class="status">${item.status}</span></p>
-          <div class="status-buttons">
-            <button onclick="atualizarStatus('${item.id}', 'confirmado')">Confirmar</button>
-            <button onclick="atualizarStatus('${item.id}', 'concluído')">Finalizar</button>
-            <button onclick="atualizarStatus('${item.id}', 'cancelado')">Cancelar</button>
-          </div>
-          <button onclick="carregarCadastroLavaRapido()">Cadastrar Lava Rápido</button>
-        </div>
-      `).join('');
+  if (!data || data.length === 0) {
+    botaoCadastro = `<button onclick="carregarCadastroLavaRapido()">Cadastrar Lava Rápido</button>`;
   }
 
   document.getElementById('app').innerHTML = `
-      <h2>Painel da Empresa</h2>
-      ${lista}
-      <button onclick="fazerLogout()">Sair</button>
-    `;
+    <h2>Painel da Empresa</h2>
+    ${botaoCadastro}
+    <button onclick="abrirConfiguracoesEmpresa()">Configurações</button>
+    <button onclick="fazerLogout()">Sair</button>
+  `;
 }
+
 
 // Atualização de status de agendamento
 async function atualizarStatus(id, novoStatus) {
@@ -399,14 +390,14 @@ async function inicializarMapa() {
 function carregarCadastroLavaRapido() {
   document.getElementById('app').innerHTML = `
     <div class="auth-box">
-      <h2>Cadastro do Lava Rápido</h2>
+      <h2>Cadastrar Lava Rápido</h2>
       <input type="text" id="nome" placeholder="Nome do Lava Rápido" />
       <input type="text" id="endereco" placeholder="Endereço completo" />
       <input type="text" id="contato" placeholder="Telefone / WhatsApp / E-mail" />
       <input type="text" id="horario" placeholder="Horário de funcionamento" />
       <input type="text" id="imagem" placeholder="URL da imagem/logo" />
-      <textarea id="servicos" rows="4" placeholder='Serviços (ex: [{"nome":"Lavagem Simples", "preco":30}])'></textarea>
-      <button onclick="salvarLavaRapido()">Cadastrar Lava Rápido</button>
+      <textarea id="descricao" rows="3" placeholder='Descrição (opcional)'></textarea>
+      <button onclick="salvarLavaRapido()">Salvar</button>
       <button onclick="carregarHomeEmpresa()">Voltar</button>
     </div>
   `;
@@ -418,22 +409,15 @@ async function salvarLavaRapido() {
   const contato = document.getElementById('contato').value;
   const horario = document.getElementById('horario').value;
   const imagem = document.getElementById('imagem').value;
-  const servicos = document.getElementById('servicos').value;
-
-  // Validação básica
-  if (!nome || !endereco || !servicos) {
-    alert('Preencha nome, endereço e serviços');
-    return;
-  }
-
-  // Geocodificação com OpenCage ou Google (aqui um exemplo mock)
-  const coords = await obterCoordenadas(endereco);
-  if (!coords) {
-    alert('Endereço inválido ou não encontrado.');
-    return;
-  }
+  const descricao = document.getElementById('descricao').value;
 
   const usuario_id = localStorage.getItem('usuario_id');
+  const coords = await obterCoordenadas(endereco);
+
+  if (!coords) {
+    alert('Endereço inválido');
+    return;
+  }
 
   const { error } = await supabaseClient
     .from('lava_rapidos')
@@ -443,19 +427,20 @@ async function salvarLavaRapido() {
       contato,
       horario_funcionamento: horario,
       imagem_url: imagem,
-      servicos: JSON.parse(servicos),
       latitude: coords.lat,
       longitude: coords.lng,
-      usuario_id
+      usuario_id,
+      descricao
     }]);
 
   if (error) {
-    alert('Erro ao salvar lava rápido: ' + error.message);
+    alert('Erro ao cadastrar: ' + error.message);
   } else {
-    alert('Lava rápido cadastrado com sucesso!');
+    alert('✅ Cadastro realizado com sucesso!');
     carregarHomeEmpresa();
   }
 }
+
 
 async function obterCoordenadas(endereco) {
   const key = '19c5bb473fe64738ae7e47a920ce3e4a';
@@ -470,4 +455,64 @@ async function obterCoordenadas(endereco) {
   }
 
   return null;
+}
+
+async function abrirConfiguracoesEmpresa() {
+  const usuario_id = localStorage.getItem('usuario_id');
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*')
+    .eq('usuario_id', usuario_id)
+    .single();
+
+  if (error || !data) {
+    alert('Lava Rápido não encontrado.');
+    return;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Configurações</h2>
+      <input type="text" id="nome" value="${data.nome}" placeholder="Nome" />
+      <input type="text" id="endereco" value="${data.endereco}" placeholder="Endereço" />
+      <input type="text" id="contato" value="${data.contato}" placeholder="Contato" />
+      <input type="text" id="horario" value="${data.horario_funcionamento}" placeholder="Horário" />
+      <input type="text" id="imagem" value="${data.imagem_url}" placeholder="Imagem" />
+      <textarea id="descricao" rows="3" placeholder="Descrição">${data.descricao || ''}</textarea>
+      <button onclick="atualizarLavaRapido('${data.id}')">Salvar Alterações</button>
+      <button onclick="carregarHomeEmpresa()">Voltar</button>
+    </div>
+  `;
+}
+
+async function atualizarLavaRapido(id) {
+  const nome = document.getElementById('nome').value;
+  const endereco = document.getElementById('endereco').value;
+  const contato = document.getElementById('contato').value;
+  const horario = document.getElementById('horario').value;
+  const imagem = document.getElementById('imagem').value;
+  const descricao = document.getElementById('descricao').value;
+
+  const coords = await obterCoordenadas(endereco);
+
+  const { error } = await supabaseClient
+    .from('lava_rapidos')
+    .update({
+      nome,
+      endereco,
+      contato,
+      horario_funcionamento: horario,
+      imagem_url: imagem,
+      latitude: coords.lat,
+      longitude: coords.lng,
+      descricao
+    })
+    .eq('id', id);
+
+  if (error) {
+    alert('Erro ao atualizar: ' + error.message);
+  } else {
+    alert('✅ Informações atualizadas com sucesso!');
+    carregarHomeEmpresa();
+  }
 }
