@@ -556,20 +556,45 @@ async function abrirConfiguracoesEmpresa() {
     return;
   }
 
+  const servicosDisponiveis = [
+    "Lavagem Básica",
+    "Lavagem Detalhada",
+    "Polimento",
+    "PPF",
+    "Higienização Interna",
+    "Enceramento"
+  ];
+
+  const servicosSelecionados = data.servicos || [];
+
+  const checkboxes = servicosDisponiveis.map(servico => `
+    <label style="display:block; margin: 5px 0;">
+      <input type="checkbox" name="servico" value="${servico}"
+        ${servicosSelecionados.includes(servico) ? 'checked' : ''} />
+      ${servico}
+    </label>
+  `).join('');
+
   document.getElementById('app').innerHTML = `
     <div class="auth-box">
       <h2>Configurações do Lava Rápido</h2>
+
       <input type="text" id="nome" value="${data.nome}" placeholder="Nome" />
       <input type="text" id="endereco" value="${data.endereco}" placeholder="Endereço" />
       <input type="text" id="contato" value="${data.contato}" placeholder="Contato" />
       <input type="text" id="horario" value="${data.horario_funcionamento}" placeholder="Horário" />
       <input type="text" id="imagem" value="${data.imagem_url}" placeholder="Imagem" />
       <textarea id="descricao" placeholder="Descrição">${data.descricao || ''}</textarea>
+
+      <h3>Serviços oferecidos:</h3>
+      ${checkboxes}
+
       <button onclick="atualizarLavaRapido('${data.id}')">Salvar Alterações</button>
       <button onclick="carregarHomeEmpresa()">Voltar</button>
     </div>
   `;
 }
+
 
 
 async function atualizarLavaRapido(id) {
@@ -582,6 +607,9 @@ async function atualizarLavaRapido(id) {
 
   const coords = await obterCoordenadas(endereco);
 
+  const checkboxes = document.querySelectorAll('input[name="servico"]:checked');
+  const servicosSelecionados = Array.from(checkboxes).map(cb => cb.value);
+
   const { error } = await supabaseClient
     .from('lava_rapidos')
     .update({
@@ -592,7 +620,8 @@ async function atualizarLavaRapido(id) {
       imagem_url: imagem,
       latitude: coords.lat,
       longitude: coords.lng,
-      descricao
+      descricao,
+      servicos: servicosSelecionados
     })
     .eq('id', id);
 
@@ -603,6 +632,7 @@ async function atualizarLavaRapido(id) {
     carregarHomeEmpresa();
   }
 }
+
 
 async function abrirPerfilLavaRapido(id) {
   const { data, error } = await supabaseClient
