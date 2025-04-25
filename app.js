@@ -12,6 +12,11 @@ function carregarLoginCliente() {
         <input type="text" id="email" placeholder="Nome de usuário" />
         <input type="password" id="senha" placeholder="Senha" />
         <button onclick="fazerLogin('cliente')">Entrar</button>
+        <button onclick="loginComGoogle()" class="btn-google">
+  <img src="https://www.svgrepo.com/show/475656/google-color.svg" width="20" style="vertical-align: middle; margin-right: 8px;" />
+  Entrar com Google
+</button>
+
         <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
         <button onclick="carregarEscolhaInicial()">Voltar</button>
       </div>
@@ -287,18 +292,34 @@ function fazerLogout() {
 
 
 // Redirecionamento automático se estiver logado
-document.addEventListener('DOMContentLoaded', () => {
-  const tipo = localStorage.getItem('tipo');
-  const logado = localStorage.getItem('logado');
+document.addEventListener('DOMContentLoaded', async () => {
+  const { data: { session } } = await supabaseClient.auth.getSession();
 
-  if (!logado) {
-    carregarEscolhaInicial();
-  } else if (tipo === 'cliente') {
+  if (session?.user) {
+    const user = session.user;
+
+    // Salvar dados no localStorage
+    localStorage.setItem('logado', 'true');
+    localStorage.setItem('usuario', user.email || user.user_metadata?.full_name || 'Usuário');
+    localStorage.setItem('usuario_id', user.id);
+    localStorage.setItem('tipo', 'cliente'); // aqui pode mudar se for empresa depois
+
+    // (Opcional) Criar ou atualizar perfil na sua tabela "usuarios"
+    await supabaseClient.from('usuarios').upsert({
+      id: user.id,
+      nome_usuario: user.email,
+      tipo: 'cliente'
+    });
+
+    // Redirecionar para a Home do Cliente
     carregarHomeCliente();
-  } else if (tipo === 'empresa') {
-    carregarHomeEmpresa();
+
+  } else {
+    // Nenhum usuário logado — segue com login normal
+    carregarEscolhaInicial(); // ou carregarLoginCliente() se quiser pular a escolha
   }
 });
+
 
 
 function carregarEscolhaInicial() {
@@ -750,3 +771,13 @@ async function atualizarCadastroCliente(id) {
   }
 }
 
+async function loginComGoogle() {
+  const { error } = await supabaseClient.auth.signInWithOAuth({
+    provider: 'google',
+    options: {
+      redirectTo: window.location.origin // ou https://seusite.netlify.app
+    }
+  });
+
+  if (error) console.error('Erro ao logar com Google:', error);
+}
