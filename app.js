@@ -201,6 +201,7 @@ async function carregarHomeEmpresa() {
             <button onclick="atualizarStatus('${item.id}', 'concluído')">Finalizar</button>
             <button onclick="atualizarStatus('${item.id}', 'cancelado')">Cancelar</button>
           </div>
+          <button onclick="carregarCadastroLavaRapido()">Cadastrar Lava Rápido</button>
         </div>
       `).join('');
   }
@@ -393,4 +394,80 @@ async function inicializarMapa() {
   }, () => {
     alert('Não foi possível obter sua localização.');
   });
+}
+
+function carregarCadastroLavaRapido() {
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Cadastro do Lava Rápido</h2>
+      <input type="text" id="nome" placeholder="Nome do Lava Rápido" />
+      <input type="text" id="endereco" placeholder="Endereço completo" />
+      <input type="text" id="contato" placeholder="Telefone / WhatsApp / E-mail" />
+      <input type="text" id="horario" placeholder="Horário de funcionamento" />
+      <input type="text" id="imagem" placeholder="URL da imagem/logo" />
+      <textarea id="servicos" rows="4" placeholder='Serviços (ex: [{"nome":"Lavagem Simples", "preco":30}])'></textarea>
+      <button onclick="salvarLavaRapido()">Cadastrar Lava Rápido</button>
+      <button onclick="carregarHomeEmpresa()">Voltar</button>
+    </div>
+  `;
+}
+
+async function salvarLavaRapido() {
+  const nome = document.getElementById('nome').value;
+  const endereco = document.getElementById('endereco').value;
+  const contato = document.getElementById('contato').value;
+  const horario = document.getElementById('horario').value;
+  const imagem = document.getElementById('imagem').value;
+  const servicos = document.getElementById('servicos').value;
+
+  // Validação básica
+  if (!nome || !endereco || !servicos) {
+    alert('Preencha nome, endereço e serviços');
+    return;
+  }
+
+  // Geocodificação com OpenCage ou Google (aqui um exemplo mock)
+  const coords = await obterCoordenadas(endereco);
+  if (!coords) {
+    alert('Endereço inválido ou não encontrado.');
+    return;
+  }
+
+  const usuario_id = localStorage.getItem('usuario_id');
+
+  const { error } = await supabaseClient
+    .from('lava_rapidos')
+    .insert([{
+      nome,
+      endereco,
+      contato,
+      horario_funcionamento: horario,
+      imagem_url: imagem,
+      servicos: JSON.parse(servicos),
+      latitude: coords.lat,
+      longitude: coords.lng,
+      usuario_id
+    }]);
+
+  if (error) {
+    alert('Erro ao salvar lava rápido: ' + error.message);
+  } else {
+    alert('Lava rápido cadastrado com sucesso!');
+    carregarHomeEmpresa();
+  }
+}
+
+async function obterCoordenadas(endereco) {
+  const key = '19c5bb473fe64738ae7e47a920ce3e4a';
+  const url = `https://api.opencagedata.com/geocode/v1/json?q=${encodeURIComponent(endereco)}&key=${key}`;
+
+  const resp = await fetch(url);
+  const data = await resp.json();
+
+  if (data.results && data.results.length > 0) {
+    const loc = data.results[0].geometry;
+    return { lat: loc.lat, lng: loc.lng };
+  }
+
+  return null;
 }
