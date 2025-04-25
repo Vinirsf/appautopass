@@ -131,6 +131,16 @@ async function carregarHomeCliente() {
     <h4>Lava Rápidos próximos</h4>
     <div id="map" style="width: 100%; height: 400px; border-radius: 8px; margin-bottom: 20px;"></div>
 
+  <div style="margin: 10px 0; text-align:center;">
+  <label for="raioSelect" style="color:#ccc;">Mostrar até:</label>
+  <select id="raioSelect" onchange="inicializarMapa()" style="margin-left:5px;">
+    <option value="1">1 km</option>
+    <option value="3" selected>3 km</option>
+    <option value="5">5 km</option>
+    <option value="10">10 km</option>
+  </select>
+</div>
+
     <div class="bottom-nav nav-modern">
   <div class="nav-item ativo" onclick="carregarHomeCliente()">
     <div>🏠</div>
@@ -350,7 +360,8 @@ function carregarCadastroLavaRapido() {
 }
 
 async function inicializarMapa() {
-  // Obtém localização do usuário
+  const raioSelecionado = parseFloat(document.getElementById('raioSelect')?.value || 3);
+
   navigator.geolocation.getCurrentPosition(async (pos) => {
     const userLat = pos.coords.latitude;
     const userLng = pos.coords.longitude;
@@ -360,7 +371,6 @@ async function inicializarMapa() {
       zoom: 14
     });
 
-    // Marca o usuário no mapa
     new google.maps.Marker({
       position: { lat: userLat, lng: userLng },
       map: mapa,
@@ -368,38 +378,34 @@ async function inicializarMapa() {
       icon: 'http://maps.google.com/mapfiles/ms/icons/blue-dot.png'
     });
 
-    // Busca os lava rápidos do Supabase
     const { data, error } = await supabaseClient
       .from('lava_rapidos')
       .select('*');
 
-    if (!data || error) {
-      console.error('Erro ao buscar lava rápidos:', error);
-      return;
-    }
+    if (!data || error) return;
 
     data.forEach(lr => {
       if (lr.latitude && lr.longitude) {
-        const marcador = new google.maps.Marker({
-          position: {
-            lat: parseFloat(lr.latitude),
-            lng: parseFloat(lr.longitude)
-          },
-          map: mapa,
-          title: lr.nome
-        });
+        const distancia = calcularDistancia(userLat, userLng, lr.latitude, lr.longitude);
+        if (distancia <= raioSelecionado) {
+          const marcador = new google.maps.Marker({
+            position: { lat: parseFloat(lr.latitude), lng: parseFloat(lr.longitude) },
+            map: mapa,
+            title: lr.nome
+          });
 
-        const info = new google.maps.InfoWindow({
-          content: `
-            <strong>${lr.nome}</strong><br/>
-            ${lr.endereco}<br/>
-            <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
-          `
-        });
+          const info = new google.maps.InfoWindow({
+            content: `
+              <strong>${lr.nome}</strong><br/>
+              ${lr.endereco}<br/>
+              <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
+            `
+          });
 
-        marcador.addListener('click', () => {
-          info.open(mapa, marcador);
-        });
+          marcador.addListener('click', () => {
+            info.open(mapa, marcador);
+          });
+        }
       }
     });
 
@@ -407,6 +413,7 @@ async function inicializarMapa() {
     alert('Não foi possível obter sua localização.');
   });
 }
+
 
 function carregarCadastroLavaRapido() {
   document.getElementById('app').innerHTML = `
@@ -643,4 +650,18 @@ async function salvarVeiculo(cliente_id) {
     alert('Veículo cadastrado com sucesso!');
     abrirMinhaConta();
   }
+}
+
+function calcularDistancia(lat1, lon1, lat2, lon2) {
+  const R = 6371; // raio da Terra em km
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  return R * c;
 }
