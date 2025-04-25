@@ -778,7 +778,7 @@ async function loginComGoogle() {
   const { error } = await supabaseClient.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: window.location.origin // ou https://seusite.netlify.app
+      redirectTo: 'https://lavarapidopwa.netlify.app/'
     }
   });
 
