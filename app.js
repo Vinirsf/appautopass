@@ -301,25 +301,33 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (session?.user) {
     const user = session.user;
 
-    // Salvar dados no localStorage
     localStorage.setItem('logado', 'true');
-    localStorage.setItem('usuario', user.email || user.user_metadata?.full_name || 'Usuário');
+    localStorage.setItem('usuario', user.email);
     localStorage.setItem('usuario_id', user.id);
-    localStorage.setItem('tipo', 'cliente'); // aqui pode mudar se for empresa depois
+    localStorage.setItem('tipo', 'cliente'); // Google users são clientes por padrão
 
-    // (Opcional) Criar ou atualizar perfil na sua tabela "usuarios"
-    await supabaseClient.from('usuarios').upsert({
-      id: user.id,
-      nome_usuario: user.email,
-      tipo: 'cliente'
-    });
+    // 🔽 Verifica se o usuário já existe na tabela 'usuarios'
+    const { data, error } = await supabaseClient
+      .from('usuarios')
+      .select('*')
+      .eq('id', user.id)
+      .single();
 
-    // Redirecionar para a Home do Cliente
-    carregarHomeCliente();
+    // 🔽 Se não existe, cria o registro
+    if (error || !data) {
+      await supabaseClient.from('usuarios').insert([{
+        id: user.id,
+        nome_usuario: user.email,
+        senha: '', // opcional, se quiser manter nulo
+        tipo: 'cliente',
+        plano: 'Básico',
+        tokens: 0
+      }]);
+    }
 
+    carregarHomeCliente(); // ou redirecione para onde quiser
   } else {
-    // Nenhum usuário logado — segue com login normal
-    carregarEscolhaInicial(); // ou carregarLoginCliente() se quiser pular a escolha
+    carregarEscolhaInicial();
   }
 });
 
