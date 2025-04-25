@@ -127,16 +127,30 @@ async function carregarHomeCliente() {
         <p class="plano">Você está no plano <span>${plano}</span></p>
       </div>
     </div>
-<div class="nav-item" onclick="abrirMinhaConta()">👤</div>
 
     <h4>Lava Rápidos próximos</h4>
     <div id="map" style="width: 100%; height: 400px; border-radius: 8px; margin-bottom: 20px;"></div>
 
     <div class="bottom-nav nav-modern">
-      <div class="nav-item ativo">🏠</div>
-      <div class="nav-item" onclick="abrirMapa()">📍</div>
-      <div class="nav-item" onclick="fazerLogout()">🚪</div>
-    </div>
+  <div class="nav-item ativo" onclick="carregarHomeCliente()">
+    <div>🏠</div>
+    <small>Início</small>
+  </div>
+  <div class="nav-item" onclick="abrirMapa()">
+    <div>📍</div>
+    <small>Mapa</small>
+  </div>
+  <div class="nav-item" onclick="abrirMinhaConta()">
+    <div>👤</div>
+    <small>Conta</small>
+  </div>
+  <div class="nav-item" onclick="fazerLogout()">
+    <div>🚪</div>
+    <small>Sair</small>
+  </div>
+</div>
+
+
   `;
 
   setTimeout(inicializarMapa, 500); // Aguarda carregamento do container
