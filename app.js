@@ -146,9 +146,9 @@ async function carregarHomeCliente() {
     <div>🏠</div>
     <small>Início</small>
   </div>
-  <div class="nav-item" onclick="abrirMapa()">
-    <div>📍</div>
-    <small>Mapa</small>
+  <div class="nav-item" onclick="carregarParceiros()">
+    <div>🤝</div>
+    <small>Parceiros</small>
   </div>
   <div class="nav-item" onclick="abrirMinhaConta()">
     <div>👤</div>
@@ -159,6 +159,7 @@ async function carregarHomeCliente() {
     <small>Sair</small>
   </div>
 </div>
+
 
 
   `;
@@ -664,4 +665,38 @@ function calcularDistancia(lat1, lon1, lat2, lon2) {
 
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
   return R * c;
+}
+
+async function carregarParceiros() {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*');
+
+  if (error || !data) {
+    alert('Erro ao carregar lava rápidos');
+    return;
+  }
+
+  // Simular nota média (enquanto não temos sistema de avaliação)
+  const lavaRapidosComNota = data.map(lr => ({
+    ...lr,
+    nota: (Math.random() * 2 + 3).toFixed(1) // notas entre 3.0 e 5.0
+  }));
+
+  // Ordenar por nota decrescente
+  lavaRapidosComNota.sort((a, b) => b.nota - a.nota);
+
+  const htmlCards = lavaRapidosComNota.map(lr => `
+    <div class="card parceiro-card">
+      <img src="${lr.imagem_url || 'https://via.placeholder.com/400x150'}" alt="${lr.nome}" />
+      <h3>${lr.nome}</h3>
+      <p>⭐ ${lr.nota}</p>
+      <button onclick="abrirPerfilLavaRapido('${lr.id}')">Ver Perfil</button>
+    </div>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <h2 style="text-align:center;">Parceiros em Destaque</h2>
+    <div class="parceiros-container">${htmlCards}</div>
+  `;
 }

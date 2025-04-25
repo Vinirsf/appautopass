@@ -300,3 +300,25 @@ input {
 .nav-item.ativo {
     color: #FFD700;
 }
+
+.parceiros-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    padding-bottom: 80px;
+}
+
+.parceiro-card {
+    background-color: #37474F;
+    padding: 12px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #fff;
+    text-align: center;
+}
+
+.parceiro-card img {
+    width: 100%;
+    border-radius: 8px;
+    margin-bottom: 8px;
+}
