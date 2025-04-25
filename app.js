@@ -141,7 +141,7 @@ async function carregarHomeCliente() {
   </select>
 </div>
 
-    <div class="bottom-nav nav-modern">
+  <div class="bottom-nav nav-modern">
   <div class="nav-item ativo" onclick="carregarHomeCliente()">
     <div>🏠</div>
     <small>Início</small>
@@ -154,11 +154,12 @@ async function carregarHomeCliente() {
     <div>👤</div>
     <small>Conta</small>
   </div>
-  <div class="nav-item" onclick="fazerLogout()">
-    <div>🚪</div>
-    <small>Sair</small>
+  <div class="nav-item" onclick="abrirConfiguracoesCliente()">
+    <div>⚙️</div>
+    <small>Config.</small>
   </div>
 </div>
+
 
 
 
@@ -700,3 +701,52 @@ async function carregarParceiros() {
     <div class="parceiros-container">${htmlCards}</div>
   `;
 }
+
+async function abrirConfiguracoesCliente() {
+  const usuario = localStorage.getItem('usuario');
+  const { data, error } = await supabaseClient
+    .from('usuarios')
+    .select('*')
+    .eq('nome_usuario', usuario)
+    .single();
+
+  if (error || !data) {
+    alert('Erro ao carregar dados.');
+    return;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>⚙️ Configurações</h2>
+
+      <button onclick="fazerLogout()">🚪 Sair</button>
+      <button onclick="window.open('https://wa.me/5511961794598?text=Olá!%20Preciso%20de%20suporte', '_blank')">💬 Suporte via WhatsApp</button>
+
+      <h3>Alterar Cadastro</h3>
+      <input type="text" id="novoUsuario" value="${data.nome_usuario}" placeholder="Nome de usuário" />
+      <input type="password" id="novaSenha" value="${data.senha}" placeholder="Senha" />
+      <button onclick="atualizarCadastroCliente('${data.id}')">Salvar Alterações</button>
+
+      <button onclick="carregarHomeCliente()">Voltar</button>
+    </div>
+  `;
+}
+
+async function atualizarCadastroCliente(id) {
+  const nome = document.getElementById('novoUsuario').value;
+  const senha = document.getElementById('novaSenha').value;
+
+  const { error } = await supabaseClient
+    .from('usuarios')
+    .update({ nome_usuario: nome, senha })
+    .eq('id', id);
+
+  if (error) {
+    alert('Erro ao atualizar cadastro.');
+  } else {
+    alert('✅ Cadastro atualizado!');
+    localStorage.setItem('usuario', nome);
+    carregarHomeCliente();
+  }
+}
+
