@@ -127,6 +127,7 @@ async function carregarHomeCliente() {
         <p class="plano">Você está no plano <span>${plano}</span></p>
       </div>
     </div>
+<div class="nav-item" onclick="abrirMinhaConta()">👤</div>
 
     <h4>Lava Rápidos próximos</h4>
     <div id="map" style="width: 100%; height: 400px; border-radius: 8px; margin-bottom: 20px;"></div>
@@ -550,4 +551,82 @@ async function abrirPerfilLavaRapido(id) {
       <button class="btn-grey" onclick="carregarHomeCliente()">Voltar</button>
     </div>
   `;
+}
+
+async function abrirMinhaConta() {
+  const usuario = localStorage.getItem('usuario');
+  const { data: usuarioData } = await supabaseClient
+    .from('usuarios')
+    .select('plano, tokens, id')
+    .eq('nome_usuario', usuario)
+    .single();
+
+  const { data: agendamentos } = await supabaseClient
+    .from('agendamentos')
+    .select('*')
+    .eq('cliente', usuario);
+
+  const { data: veiculos } = await supabaseClient
+    .from('veiculos')
+    .select('*')
+    .eq('cliente_id', usuarioData.id);
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Minha Conta</h2>
+      <p><strong>Usuário:</strong> ${usuario}</p>
+      <p><strong>Plano:</strong> ${usuarioData.plano}</p>
+      <p><strong>Tokens:</strong> ${usuarioData.tokens}</p>
+
+      <h3>Meus Veículos</h3>
+      ${veiculos && veiculos.length > 0 ? veiculos.map(v => `
+        <p>🚗 ${v.marca} ${v.modelo} — ${v.placa}</p>
+      `).join('') : '<p>Nenhum veículo cadastrado.</p>'}
+      <button onclick="cadastrarVeiculo()">Cadastrar Veículo</button>
+
+      <h3>Histórico de Agendamentos</h3>
+      ${agendamentos && agendamentos.length > 0 ? agendamentos.map(a => `
+        <div class="card">
+          <p><strong>${a.local}</strong></p>
+          <p>${a.data} às ${a.horario} — ${a.status}</p>
+        </div>
+      `).join('') : '<p>Você ainda não tem agendamentos.</p>'}
+
+      <button onclick="carregarHomeCliente()">Voltar</button>
+    </div>
+  `;
+}
+
+function cadastrarVeiculo() {
+  const id = localStorage.getItem('usuario_id');
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>Cadastrar Veículo</h2>
+      <input type="text" id="marca" placeholder="Marca" />
+      <input type="text" id="modelo" placeholder="Modelo" />
+      <input type="text" id="placa" placeholder="Placa" />
+      <input type="text" id="cor" placeholder="Cor" />
+      <button onclick="salvarVeiculo('${id}')">Salvar</button>
+      <button onclick="abrirMinhaConta()">Voltar</button>
+    </div>
+  `;
+}
+
+async function salvarVeiculo(cliente_id) {
+  const marca = document.getElementById('marca').value;
+  const modelo = document.getElementById('modelo').value;
+  const placa = document.getElementById('placa').value;
+  const cor = document.getElementById('cor').value;
+
+  const { error } = await supabaseClient
+    .from('veiculos')
+    .insert([{ cliente_id, marca, modelo, placa, cor }]);
+
+  if (error) {
+    alert('Erro ao salvar veículo');
+  } else {
+    alert('Veículo cadastrado com sucesso!');
+    abrirMinhaConta();
+  }
 }
