@@ -59,15 +59,39 @@ function carregarLoginEmpresa() {
 // Cadastro da empresa
 function carregarCadastroEmpresa() {
   document.getElementById('app').innerHTML = `
-      <div class="auth-box">
-        <h2>Cadastro - Lava Rápido</h2>
-        <input type="text" id="email" placeholder="Nome da empresa" />
-        <input type="password" id="senha" placeholder="Senha" />
-        <button onclick="fazerCadastro('empresa')">Cadastrar</button>
-        <button onclick="carregarLoginEmpresa()">Voltar</button>
-      </div>
-    `;
+    <div class="auth-box">
+      <h2>Cadastro do Estabelecimento</h2>
+
+      <input type="text" id="nome_proprietario" placeholder="Nome do Proprietário" />
+      <input type="text" id="nome_fantasia" placeholder="Nome Fantasia do Estabelecimento" />
+      <input type="text" id="cpf" placeholder="CPF" />
+      <input type="text" id="cnpj" placeholder="CNPJ" />
+      <input type="text" id="endereco" placeholder="Endereço completo (CEP, rua, número, cidade, estado, país)" />
+
+      <label>Serviços oferecidos:</label>
+      <select id="servicos" multiple style="height:100px;">
+        <option value="Lavagem Básica">Lavagem Básica</option>
+        <option value="Lavagem Detalhada">Lavagem Detalhada</option>
+        <option value="Polimento">Polimento</option>
+        <option value="PPF">PPF</option>
+        <option value="Higienização Interna">Higienização Interna</option>
+        <option value="Enceramento">Enceramento</option>
+      </select>
+
+      <input type="text" id="email" placeholder="E-mail de acesso" />
+      <input type="password" id="senha" placeholder="Senha de acesso" />
+
+      <label style="margin-top: 10px;">
+        <input type="checkbox" id="aceite" />
+        Aceito os termos de uso
+      </label>
+
+      <button onclick="salvarCadastroEmpresa()">Cadastrar</button>
+      <button onclick="carregarEscolhaInicial()">Voltar</button>
+    </div>
+  `;
 }
+
 
 
 // Cadastro de usuário
@@ -791,4 +815,45 @@ async function loginComGoogle() {
   });
 
   if (error) console.error('Erro ao logar com Google:', error);
+}
+
+async function salvarCadastroEmpresa() {
+  const nome_usuario = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
+  const aceite = document.getElementById('aceite').checked;
+
+  const nome_proprietario = document.getElementById('nome_proprietario').value;
+  const nome_fantasia = document.getElementById('nome_fantasia').value;
+  const cpf = document.getElementById('cpf').value;
+  const cnpj = document.getElementById('cnpj').value;
+  const endereco = document.getElementById('endereco').value;
+
+  const servicosSelect = document.getElementById('servicos');
+  const servicos = Array.from(servicosSelect.selectedOptions).map(opt => opt.value);
+
+  if (!aceite) {
+    alert("Você precisa aceitar os termos.");
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from('usuarios')
+    .insert([{
+      nome_usuario,
+      senha,
+      tipo: 'empresa',
+      nome_proprietario,
+      nome_fantasia,
+      cpf,
+      cnpj,
+      endereco,
+      servicos: JSON.stringify(servicos)
+    }]);
+
+  if (error) {
+    alert("Erro ao cadastrar: " + error.message);
+  } else {
+    alert("Cadastro realizado com sucesso!");
+    carregarLoginEmpresa();
+  }
 }

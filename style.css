@@ -354,3 +354,13 @@ input {
 .btn-google img {
     height: 20px;
 }
+
+.auth-box select[multiple] {
+    width: 100%;
+    padding: 6px;
+    border-radius: 4px;
+    background-color: #1e1e1e;
+    color: #fff;
+    border: 1px solid #444;
+}
+
