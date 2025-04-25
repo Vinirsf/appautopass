@@ -107,6 +107,7 @@ async function fazerLogin(tipo) {
   localStorage.setItem('logado', 'true');
   localStorage.setItem('tipo', tipo);
   localStorage.setItem('usuario', nome);
+  localStorage.setItem('usuario_id', data.id); // este 'data.id' é o id do usuário/empresa
 
   tipo === 'cliente'
     ? carregarHomeCliente()
@@ -183,25 +184,30 @@ async function confirmarAgendamento(local) {
 // Tela da empresa com lista de agendamentos
 async function carregarHomeEmpresa() {
   const usuario_id = localStorage.getItem('usuario_id');
-  const { data } = await supabaseClient
+
+  const { data, error } = await supabaseClient
     .from('lava_rapidos')
     .select('*')
     .eq('usuario_id', usuario_id)
     .limit(1);
 
   let botaoCadastro = '';
+  let configuracoes = '';
 
-  if (!data || data.length === 0) {
+  if (!error && data && data.length === 0) {
     botaoCadastro = `<button onclick="carregarCadastroLavaRapido()">Cadastrar Lava Rápido</button>`;
+  } else {
+    configuracoes = `<button onclick="abrirConfiguracoesEmpresa()">Configurações do Lava Rápido</button>`;
   }
 
   document.getElementById('app').innerHTML = `
     <h2>Painel da Empresa</h2>
     ${botaoCadastro}
-    <button onclick="abrirConfiguracoesEmpresa()">Configurações</button>
+    ${configuracoes}
     <button onclick="fazerLogout()">Sair</button>
   `;
 }
+
 
 
 // Atualização de status de agendamento
@@ -472,18 +478,19 @@ async function abrirConfiguracoesEmpresa() {
 
   document.getElementById('app').innerHTML = `
     <div class="auth-box">
-      <h2>Configurações</h2>
+      <h2>Configurações do Lava Rápido</h2>
       <input type="text" id="nome" value="${data.nome}" placeholder="Nome" />
       <input type="text" id="endereco" value="${data.endereco}" placeholder="Endereço" />
       <input type="text" id="contato" value="${data.contato}" placeholder="Contato" />
       <input type="text" id="horario" value="${data.horario_funcionamento}" placeholder="Horário" />
       <input type="text" id="imagem" value="${data.imagem_url}" placeholder="Imagem" />
-      <textarea id="descricao" rows="3" placeholder="Descrição">${data.descricao || ''}</textarea>
+      <textarea id="descricao" placeholder="Descrição">${data.descricao || ''}</textarea>
       <button onclick="atualizarLavaRapido('${data.id}')">Salvar Alterações</button>
       <button onclick="carregarHomeEmpresa()">Voltar</button>
     </div>
   `;
 }
+
 
 async function atualizarLavaRapido(id) {
   const nome = document.getElementById('nome').value;
@@ -512,7 +519,7 @@ async function atualizarLavaRapido(id) {
   if (error) {
     alert('Erro ao atualizar: ' + error.message);
   } else {
-    alert('✅ Informações atualizadas com sucesso!');
+    alert('✅ Alterações salvas com sucesso!');
     carregarHomeEmpresa();
   }
 }
