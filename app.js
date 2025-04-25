@@ -523,3 +523,31 @@ async function atualizarLavaRapido(id) {
     carregarHomeEmpresa();
   }
 }
+
+async function abrirPerfilLavaRapido(id) {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*')
+    .eq('id', id)
+    .single();
+
+  if (error || !data) {
+    alert('Erro ao carregar lava rápido.');
+    return;
+  }
+
+  document.getElementById('app').innerHTML = `
+    <div class="auth-box">
+      <h2>${data.nome}</h2>
+      <img src="${data.imagem_url || 'https://via.placeholder.com/400x200'}" style="width:100%; border-radius:10px; margin-bottom:10px" />
+      
+      <p><strong>📍 Endereço:</strong> ${data.endereco}</p>
+      <p><strong>🕒 Horário:</strong> ${data.horario_funcionamento}</p>
+      <p><strong>📞 Contato:</strong> ${data.contato}</p>
+      <p><strong>📝 Descrição:</strong><br/> ${data.descricao || 'Sem descrição fornecida.'}</p>
+
+      <button class="btn-blue" onclick="abrirAgendamento('${data.nome}')">Agendar Lavagem</button>
+      <button class="btn-grey" onclick="carregarHomeCliente()">Voltar</button>
+    </div>
+  `;
+}
