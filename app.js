@@ -147,58 +147,36 @@ async function fazerLogin(tipo) {
 }
 
 // Tela inicial do cliente
-async function carregarHomeCliente() {
-  const plano = localStorage.getItem('plano') || 'Básico';
-  const usuario = localStorage.getItem('usuario') || 'Usuário';
+async function abrirAreaServico(tipo) {
+  const { data, error } = await supabaseClient
+    .from('estabelecimentos')
+    .select('*')
+    .eq('tipo_servico', tipo);
+
+  if (error || !data) {
+    alert('Erro ao carregar serviços.');
+    return;
+  }
+
+  const cards = data.map(estab => `
+    <div class="card parceiro-card">
+      <img src="${estab.imagem_url || 'https://via.placeholder.com/400x150'}" alt="${estab.nome}" />
+      <h3>${estab.nome}</h3>
+      <p>⭐ ${estab.nota || '4.5'}</p>
+      <button onclick="abrirPerfilLavaRapido('${estab.id}')">Ver Perfil</button>
+    </div>
+  `).join('');
 
   document.getElementById('app').innerHTML = `
-    <div class="topo">
-      <div class="avatar">${usuario.charAt(0).toUpperCase()}</div>
-      <div>
-        <h3>Olá, ${usuario}</h3>
-        <p class="plano">Você está no plano <span>${plano}</span></p>
-      </div>
+    <h2>${tipo.replace('_', ' ').toUpperCase()}</h2>
+    <div class="parceiros-container">
+      ${cards}
     </div>
 
-    <h4>Lava Rápidos próximos</h4>
-    <div id="map" style="width: 100%; height: 400px; border-radius: 8px; margin-bottom: 20px;"></div>
-
-  <div style="margin: 10px 0; text-align:center;">
-  <label for="raioSelect" style="color:#ccc;">Mostrar até:</label>
-  <select id="raioSelect" onchange="inicializarMapa()" style="margin-left:5px;">
-    <option value="1">1 km</option>
-    <option value="3" selected>3 km</option>
-    <option value="5">5 km</option>
-    <option value="10">10 km</option>
-  </select>
-</div>
-
-  <div class="bottom-nav nav-modern">
-  <div class="nav-item ativo" onclick="carregarHomeCliente()">
-    <div>🏠</div>
-    <small>Início</small>
-  </div>
-  <div class="nav-item" onclick="carregarParceiros()">
-    <div>🤝</div>
-    <small>Parceiros</small>
-  </div>
-  <div class="nav-item" onclick="abrirMinhaConta()">
-    <div>👤</div>
-    <small>Conta</small>
-  </div>
-  <div class="nav-item" onclick="abrirConfiguracoesCliente()">
-    <div>⚙️</div>
-    <small>Config.</small>
-  </div>
-</div>
-
-
-
-
+    ${menuInferior()}
   `;
-
-  setTimeout(inicializarMapa, 500); // Aguarda carregamento do container
 }
+
 
 
 
@@ -886,4 +864,57 @@ async function salvarCadastroEmpresa() {
     alert("Cadastro realizado com sucesso!");
     carregarLoginEmpresa();
   }
+}
+
+async function abrirAreaServico(tipo) {
+  const { data, error } = await supabaseClient
+    .from('estabelecimentos')
+    .select('*')
+    .eq('tipo_servico', tipo);
+
+  if (error || !data) {
+    alert('Erro ao carregar serviços.');
+    return;
+  }
+
+  const cards = data.map(estab => `
+    <div class="card parceiro-card">
+      <img src="${estab.imagem_url || 'https://via.placeholder.com/400x150'}" alt="${estab.nome}" />
+      <h3>${estab.nome}</h3>
+      <p>⭐ ${estab.nota || '4.5'}</p>
+      <button onclick="abrirPerfilLavaRapido('${estab.id}')">Ver Perfil</button>
+    </div>
+  `).join('');
+
+  document.getElementById('app').innerHTML = `
+    <h2>${tipo.replace('_', ' ').toUpperCase()}</h2>
+    <div class="parceiros-container">
+      ${cards}
+    </div>
+
+    ${menuInferior()}
+  `;
+}
+
+function menuInferior() {
+  return `
+    <div class="bottom-nav nav-modern">
+      <div class="nav-item" onclick="carregarHomeCliente()">
+        <div>🏠</div>
+        <small>Início</small>
+      </div>
+      <div class="nav-item" onclick="carregarParceiros()">
+        <div>📋</div>
+        <small>Serviços</small>
+      </div>
+      <div class="nav-item" onclick="abrirMinhaConta()">
+        <div>👤</div>
+        <small>Conta</small>
+      </div>
+      <div class="nav-item" onclick="abrirConfiguracoesCliente()">
+        <div>⚙️</div>
+        <small>Configurações</small>
+      </div>
+    </div>
+  `;
 }
