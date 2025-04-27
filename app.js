@@ -6,17 +6,24 @@ const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 document.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
+  // Esconde Splash depois de 2 segundos
+  setTimeout(() => {
+    const splash = document.getElementById('splash-screen');
+    if (splash) splash.style.display = 'none';
+  }, 2000);
+
   if (session?.user) {
     const user = session.user;
     localStorage.setItem('logado', 'true');
     localStorage.setItem('usuario', user.email);
     localStorage.setItem('usuario_id', user.id);
-    localStorage.setItem('tipo', 'cliente'); // padrão
+    localStorage.setItem('tipo', 'cliente');
     carregarHomeCliente();
   } else {
     carregarEscolhaInicial();
   }
 });
+
 
 function carregarEscolhaInicial() {
   document.getElementById('app').innerHTML = `
