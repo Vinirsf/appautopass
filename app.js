@@ -1,16 +1,15 @@
 const SUPABASE_URL = 'https://fbdytxfxshbhebowpaur.supabase.co';
 const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZHl0eGZ4c2hiaGVib3dwYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDY2MTgsImV4cCI6MjA2MTAyMjYxOH0.Lw8J1mGOi8PfYsCcLDW1zl3KRlu_Bexs_BmMACzS3ms';
-const { createClient } = supabase;
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
 document.addEventListener('DOMContentLoaded', async () => {
   const { data: { session } } = await supabaseClient.auth.getSession();
 
-  // Esconde Splash depois de 2 segundos
+  // Esconde o splash screen depois de 1,5 segundos
   setTimeout(() => {
     const splash = document.getElementById('splash-screen');
     if (splash) splash.style.display = 'none';
-  }, 2000);
+  }, 1500);
 
   if (session?.user) {
     const user = session.user;
@@ -24,51 +23,57 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
-
+// Tela inicial de escolha
 function carregarEscolhaInicial() {
   document.getElementById('app').innerHTML = `
-    <div class="auth-box">
-      <h2>Bem-vindo ao Autopass</h2>
-      <button onclick="carregarLoginCliente()">Entrar</button>
-      <button onclick="carregarCadastroCliente()">Criar Conta</button>
+    <div class="login-container">
+      <div class="login-box">
+        <img src="images/logo-autopass.png" class="logo-login" alt="Autopass Logo" />
+        <h2>Bem-vindo ao Autopass</h2>
+        <button onclick="carregarLoginCliente()">Entrar</button>
+        <button onclick="carregarCadastroCliente()">Criar Conta</button>
+      </div>
     </div>
   `;
 }
 
+// Tela Home Cliente
 function carregarHomeCliente() {
   document.getElementById('app').innerHTML = `
-    <div class="home-header">
-      <img src="images/logo-autopass.png" alt="Autopass" class="logo-autopass" />
-      <h2 style="color: #edcd33;">Escolha seu serviço</h2>
+    <div class="home-container">
+      <div class="home-header">
+        <img src="images/logo-autopass.png" alt="Autopass" class="logo-autopass" />
+        <h2 class="home-title">Escolha seu serviço</h2>
+      </div>
+
+      <div class="areas-servico">
+        <div class="area animated" onclick="abrirAreaServico('lava_rapido')">
+          <img src="icons/lava-rapido.png" alt="Lava Rápido" />
+          <p>Lava Rápido</p>
+        </div>
+
+        <div class="area animated" onclick="abrirAreaServico('mecanica')">
+          <img src="icons/mecanica.png" alt="Mecânica" />
+          <p>Mecânica</p>
+        </div>
+
+        <div class="area animated" onclick="abrirAreaServico('guincho')">
+          <img src="icons/guincho.png" alt="Guincho" />
+          <p>Guincho</p>
+        </div>
+
+        <div class="area animated" onclick="abrirAreaServico('borracharia')">
+          <img src="icons/borracharia.png" alt="Borracharia" />
+          <p>Borracharia</p>
+        </div>
+      </div>
+
+      ${menuInferior()}
     </div>
-
-    <div class="areas-servico">
-      <div class="area animated" onclick="abrirAreaServico('lava_rapido')">
-        <img src="icons/lava-rapido.png" alt="Lava Rápido" />
-        <p>Lava Rápido</p>
-      </div>
-
-      <div class="area animated" onclick="abrirAreaServico('mecanica')">
-        <img src="icons/mecanica.png" alt="Mecânica" />
-        <p>Mecânica</p>
-      </div>
-
-      <div class="area animated" onclick="abrirAreaServico('guincho')">
-        <img src="icons/guincho.png" alt="Guincho" />
-        <p>Guincho</p>
-      </div>
-
-      <div class="area animated" onclick="abrirAreaServico('borracharia')">
-        <img src="icons/borracharia.png" alt="Borracharia" />
-        <p>Borracharia</p>
-      </div>
-    </div>
-
-    ${menuInferior()}
   `;
 }
 
-
+// Menu Inferior
 function menuInferior() {
   return `
     <div class="bottom-nav nav-modern">
@@ -90,4 +95,83 @@ function menuInferior() {
       </div>
     </div>
   `;
+}
+
+// Funções de Login e Cadastro
+function carregarLoginCliente() {
+  document.getElementById('app').innerHTML = `
+    <div class="login-container">
+      <div class="login-box">
+        <img src="images/logo-autopass.png" class="logo-login" alt="Autopass Logo" />
+        <h2>Login Cliente</h2>
+        <input type="text" id="email" placeholder="E-mail" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerLogin('cliente')">Entrar</button>
+        <p class="auth-link">Não tem conta? <a href="#" onclick="carregarCadastroCliente()">Cadastre-se</a></p>
+        <button class="btn-voltar" onclick="carregarEscolhaInicial()">Voltar</button>
+      </div>
+    </div>
+  `;
+}
+
+function carregarCadastroCliente() {
+  document.getElementById('app').innerHTML = `
+    <div class="login-container">
+      <div class="login-box">
+        <img src="images/logo-autopass.png" class="logo-login" alt="Autopass Logo" />
+        <h2>Cadastro Cliente</h2>
+        <input type="text" id="email" placeholder="E-mail" />
+        <input type="password" id="senha" placeholder="Senha" />
+        <button onclick="fazerCadastro('cliente')">Cadastrar</button>
+        <button class="btn-voltar" onclick="carregarEscolhaInicial()">Voltar</button>
+      </div>
+    </div>
+  `;
+}
+
+// Simulação de Login/Cadastro
+async function fazerLogin(tipo) {
+  const email = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
+
+  const { data, error } = await supabaseClient
+    .from('usuarios')
+    .select('*')
+    .eq('nome_usuario', email)
+    .eq('senha', senha)
+    .eq('tipo', tipo)
+    .single();
+
+  if (error || !data) {
+    alert('Usuário ou senha inválidos.');
+    return;
+  }
+
+  localStorage.setItem('logado', 'true');
+  localStorage.setItem('usuario', email);
+  localStorage.setItem('usuario_id', data.id);
+  localStorage.setItem('tipo', tipo);
+
+  carregarHomeCliente();
+}
+
+async function fazerCadastro(tipo) {
+  const email = document.getElementById('email').value;
+  const senha = document.getElementById('senha').value;
+
+  const { error } = await supabaseClient
+    .from('usuarios')
+    .insert([{ nome_usuario: email, senha, tipo }]);
+
+  if (error) {
+    alert('Erro ao cadastrar.');
+  } else {
+    alert('Cadastro realizado!');
+    carregarLoginCliente();
+  }
+}
+
+// Abrir áreas (exemplo)
+function abrirAreaServico(tipo) {
+  alert(`Abrir lista de estabelecimentos: ${tipo}`);
 }
