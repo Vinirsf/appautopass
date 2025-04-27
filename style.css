@@ -1,9 +1,9 @@
 body {
-    background-color: #f5f9fc;
+    background-color: #0b0e10;
     font-family: 'Poppins', sans-serif;
     margin: 0;
     padding-bottom: 80px;
-    /* espaço para nav bar */
+    color: #ffffff;
 }
 
 .home-header {
@@ -24,7 +24,7 @@ body {
 }
 
 .area {
-    background: #e0efff;
+    background: #292f39;
     width: 30%;
     margin-bottom: 15px;
     padding: 10px;
@@ -35,7 +35,7 @@ body {
 }
 
 .area:hover {
-    background: #c5e0ff;
+    background: #02131e;
 }
 
 .area img {
@@ -45,7 +45,7 @@ body {
 
 .area p {
     font-size: 14px;
-    color: #1a237e;
+    color: #edcd33;
     font-weight: bold;
 }
 
@@ -56,8 +56,8 @@ body {
     position: fixed;
     bottom: 0;
     width: 100%;
-    background-color: #ffffff;
-    border-top: 1px solid #ccc;
+    background-color: #02131e;
+    border-top: 1px solid #292f39;
     padding: 10px 0;
 }
 
@@ -65,23 +65,23 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
-    color: #607d8b;
+    color: #ffffff;
     font-size: 20px;
     cursor: pointer;
 }
 
 .nav-item small {
     font-size: 11px;
-    color: #455a64;
+    color: #edcd33;
     margin-top: 2px;
 }
 
 .card.parceiro-card {
-    background-color: #ffffff;
+    background-color: #292f39;
     margin: 10px;
     padding: 10px;
     border-radius: 8px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
     text-align: center;
 }
 
@@ -91,4 +91,19 @@ body {
     object-fit: cover;
     border-radius: 6px;
     margin-bottom: 8px;
+}
+
+button {
+    background: #0068a6;
+    color: #ffffff;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 6px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background 0.3s;
+}
+
+button:hover {
+    background: #004d7a;
 }
