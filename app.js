@@ -32,21 +32,28 @@ function carregarHomeCliente() {
   document.getElementById('app').innerHTML = `
     <div class="home-header">
       <img src="images/logo-autopass.png" alt="Autopass" class="logo-autopass" />
-      <h2>Order a service from anywhere</h2>
+      <h2 style="color: #edcd33;">Escolha seu serviço</h2>
     </div>
 
     <div class="areas-servico">
-      <div class="area" onclick="abrirAreaServico('lava_rapido')">
+      <div class="area animated" onclick="abrirAreaServico('lava_rapido')">
         <img src="icons/lava-rapido.png" alt="Lava Rápido" />
         <p>Lava Rápido</p>
       </div>
-      <div class="area" onclick="abrirAreaServico('mecanica')">
+
+      <div class="area animated" onclick="abrirAreaServico('mecanica')">
         <img src="icons/mecanica.png" alt="Mecânica" />
-        <p>Oficina</p>
+        <p>Mecânica</p>
       </div>
-      <div class="area" onclick="abrirAreaServico('guincho')">
+
+      <div class="area animated" onclick="abrirAreaServico('guincho')">
         <img src="icons/guincho.png" alt="Guincho" />
         <p>Guincho</p>
+      </div>
+
+      <div class="area animated" onclick="abrirAreaServico('borracharia')">
+        <img src="icons/borracharia.png" alt="Borracharia" />
+        <p>Borracharia</p>
       </div>
     </div>
 
@@ -54,10 +61,6 @@ function carregarHomeCliente() {
   `;
 }
 
-function abrirAreaServico(tipo) {
-  // Em breve: carregar estabelecimentos por tipo
-  alert(`Abrir estabelecimentos de ${tipo.replace('_', ' ')}`);
-}
 
 function menuInferior() {
   return `
