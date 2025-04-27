@@ -1,5 +1,5 @@
-const SUPABASE_URL = 'https://SEU-SUPABASE-URL';
-const SUPABASE_ANON_KEY = 'SEU-ANON-KEY';
+const SUPABASE_URL = 'https://fbdytxfxshbhebowpaur.supabase.co';
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZiZHl0eGZ4c2hiaGVib3dwYXVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU0NDY2MTgsImV4cCI6MjA2MTAyMjYxOH0.Lw8J1mGOi8PfYsCcLDW1zl3KRlu_Bexs_BmMACzS3ms';
 const { createClient } = supabase;
 const supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 
