@@ -216,3 +216,18 @@ async function carregarEstabelecimentos(tipoServico) {
 
   document.getElementById('app').innerHTML = html;
 }
+
+async function carregarEstabelecimentos(tipoServico) {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*')
+    .eq('tipo_servico', tipoServico);
+
+  if (error) {
+    alert('Erro ao carregar estabelecimentos.');
+    console.error(error);
+    return;
+  }
+  ...
+}
+
