@@ -173,5 +173,46 @@ async function fazerCadastro(tipo) {
 
 // Abrir áreas (exemplo)
 function abrirAreaServico(tipo) {
-  alert(`Abrir lista de estabelecimentos: ${tipo}`);
+  carregarEstabelecimentos(tipo);
+}
+
+
+async function carregarEstabelecimentos(tipoServico) {
+  const { data, error } = await supabaseClient
+    .from('lava_rapidos')
+    .select('*')
+    .eq('tipo_servico', tipoServico);
+
+  if (error) {
+    alert('Erro ao carregar estabelecimentos.');
+    return;
+  }
+
+  let html = `
+    <div class="home-header">
+      <img src="images/logo-autopass.png" alt="Autopass" class="logo-autopass" />
+      <h2 class="home-title">Estabelecimentos de ${tipoServico.replace('_', ' ')}</h2>
+    </div>
+
+    <div class="lista-estabelecimentos">
+  `;
+
+  if (data.length === 0) {
+    html += `<p style="text-align:center; color:white;">Nenhum estabelecimento encontrado.</p>`;
+  } else {
+    data.forEach(estabelecimento => {
+      html += `
+        <div class="card parceiro-card">
+          <img src="${estabelecimento.imagem_url}" alt="${estabelecimento.nome}" />
+          <h3>${estabelecimento.nome}</h3>
+          <p>⭐ ${estabelecimento.nota_media || 'Sem avaliação'}</p>
+          <button onclick="verPerfilEstabelecimento('${estabelecimento.id}')">Ver Perfil</button>
+        </div>
+      `;
+    });
+  }
+
+  html += `</div> ${menuInferior()}`;
+
+  document.getElementById('app').innerHTML = html;
 }
