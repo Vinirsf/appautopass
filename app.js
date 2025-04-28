@@ -231,3 +231,51 @@ async function carregarEstabelecimentos(tipoServico) {
   ...
 }
 
+function abrirCadastroEstabelecimento() {
+  document.getElementById('app').innerHTML = `
+    <div class="login-container">
+      <div class="login-box">
+        <img src="images/logo-autopass.png" class="logo-login" alt="Autopass Logo" />
+        <h2>Cadastro de Estabelecimento</h2>
+
+        <input type="text" id="nome" placeholder="Nome do Estabelecimento" />
+        <select id="tipo_servico">
+          <option value="lava_rapido">Lava Rápido</option>
+          <option value="mecanica">Mecânica</option>
+          <option value="guincho">Guincho</option>
+          <option value="borracharia">Borracharia</option>
+        </select>
+        <input type="text" id="imagem_url" placeholder="URL da Imagem" />
+        <input type="number" id="nota_media" placeholder="Nota Média (opcional)" min="0" max="5" step="0.1" />
+
+        <button onclick="salvarEstabelecimento()">Cadastrar</button>
+        <button class="btn-voltar" onclick="carregarHomeCliente()">Voltar</button>
+      </div>
+    </div>
+  `;
+}
+
+async function salvarEstabelecimento() {
+  const nome = document.getElementById('nome').value.trim();
+  const tipo_servico = document.getElementById('tipo_servico').value;
+  const imagem_url = document.getElementById('imagem_url').value.trim();
+  const nota_media = parseFloat(document.getElementById('nota_media').value) || null;
+
+  if (!nome || !tipo_servico) {
+    alert('Preencha todos os campos obrigatórios.');
+    return;
+  }
+
+  const { error } = await supabaseClient
+    .from('lava_rapidos')
+    .insert([{ nome, tipo_servico, imagem_url, nota_media }]);
+
+  if (error) {
+    console.error(error);
+    alert('Erro ao cadastrar estabelecimento.');
+  } else {
+    alert('Estabelecimento cadastrado com sucesso!');
+    carregarHomeCliente();
+  }
+}
+
